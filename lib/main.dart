@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toothy/views/auth/view/login_screen.dart';
 import 'package:toothy/views/auth/view/register_screen.dart';
+import 'package:toothy/views/home/view/home_screen.dart';
 import 'package:toothy/views/onboarding/view/onboarding_view.dart';
 import 'package:toothy/views/splashscreen/splashscreen_view.dart';
 
@@ -27,28 +28,8 @@ class MyApp extends StatelessWidget {
         '/onboarding': (context) => const OnboardingView(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
+        '/home': (context) => const HomeScreen(),
       },
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-        )
-      ),
     );
   }
 }
