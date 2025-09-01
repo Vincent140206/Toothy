@@ -22,14 +22,26 @@ class HomeScreen extends StatelessWidget {
                 const _HomeAppBar(),
                 const _AppointmentBanner(),
                 const SizedBox(height: 30),
-                Text(
-                  'Top Dentist',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Top Dentist',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Spacer(),
+                    Text(
+                      'Lihat Semua',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.blue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 const _TopDentist(),
                 const SizedBox(height: 30),
                 Text(

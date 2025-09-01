@@ -11,7 +11,7 @@ class _AppointmentBanner extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.symmetric(
         horizontal: screenWidth * 0.05,
-        vertical: screenHeight * 0.025,
+        vertical: screenHeight * 0.02,
       ),
       decoration: BoxDecoration(
         color: const Color(0xFF007FFF),
@@ -23,7 +23,7 @@ class _AppointmentBanner extends StatelessWidget {
         children: [
           Image.asset(
             'assets/images/Icon_noAppointment.png',
-            width: screenWidth * 0.1,
+            width: screenWidth * 0.07,
           ),
           SizedBox(width: screenWidth * 0.04),
           Text(
