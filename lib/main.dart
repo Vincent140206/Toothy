@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:toothy/views/auth/view/login_screen.dart';
 import 'package:toothy/views/auth/view/register_screen.dart';
 import 'package:toothy/views/home/view/home_screen.dart';
+import 'package:toothy/views/home/view/main_screen.dart';
 import 'package:toothy/views/onboarding/view/onboarding_view.dart';
 import 'package:toothy/views/splashscreen/splashscreen_view.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
+        '/main': (context) => const MainScreen(),
       },
     );
   }

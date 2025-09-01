@@ -53,6 +53,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 const _NewsSection(),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -61,3 +62,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
