@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/background.dart';
 import '../../../../core/widgets/custom_textfield.dart';
+import '../../../viewmodels/auth_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+  final _viewModel = LoginViewModel();
 
   @override
   void dispose() {
@@ -151,8 +153,35 @@ class _LoginScreenState extends State<LoginScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/main');
+              onPressed: () async {
+                final email = _emailController.text;
+                final password = _passwordController.text;
+                if (email.isEmpty || password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Email dan password wajib di isi')),
+                  );
+                  return;
+                }
+
+                if (!email.contains('@')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Email tidak valid')),
+                  );
+                  return;
+                }
+
+                final success = await _viewModel.login(email, password);
+                if (success) {
+                  if (context.mounted) {
+                    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+                  }
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(_viewModel.errorMessage ?? 'Gagal masuk')),
+                    );
+                  }
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
