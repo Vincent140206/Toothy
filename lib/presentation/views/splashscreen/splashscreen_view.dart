@@ -1,5 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../../../core/services/auth_services.dart';
 
 class SplashscreenView extends StatefulWidget {
   const SplashscreenView({super.key});
@@ -9,13 +9,14 @@ class SplashscreenView extends StatefulWidget {
 }
 
 class _SplashscreenViewState extends State<SplashscreenView> {
+  final _authService = AuthServices();
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, '/onboarding');
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(seconds: 3));
+      _authService.checkSession(context);
     });
   }
 
@@ -27,9 +28,8 @@ class _SplashscreenViewState extends State<SplashscreenView> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(
-            color: const Color(0xFF09C2BD),
-          ),
+          Container(color: const Color(0xFF09C2BD)),
+
           Positioned(
             left: screenWidth * 0.68,
             top: screenHeight * 1.17,
@@ -48,6 +48,7 @@ class _SplashscreenViewState extends State<SplashscreenView> {
               ),
             ),
           ),
+
           Positioned(
             left: screenWidth * 0.40,
             top: screenHeight * -0.26,
@@ -66,6 +67,7 @@ class _SplashscreenViewState extends State<SplashscreenView> {
               ),
             ),
           ),
+
           Positioned(
             left: screenWidth * -0.36,
             top: screenHeight * 0.58,
@@ -78,6 +80,7 @@ class _SplashscreenViewState extends State<SplashscreenView> {
               ),
             ),
           ),
+
           Positioned(
             left: screenWidth * 0.63,
             top: screenHeight * 0.04,
@@ -90,6 +93,7 @@ class _SplashscreenViewState extends State<SplashscreenView> {
               ),
             ),
           ),
+
           Align(
             alignment: const Alignment(0, -0.5),
             child: Text(
@@ -104,6 +108,7 @@ class _SplashscreenViewState extends State<SplashscreenView> {
               ),
             ),
           ),
+
           Positioned(
             left: screenWidth * -0.1,
             top: screenHeight * 0.44,
