@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import '../../../core/widgets/background.dart';
-import '../../../core/widgets/custom_textfield.dart';
+import '../../../../core/widgets/background.dart';
+import '../../../../core/widgets/custom_textfield.dart';
+import '../../../viewmodels/auth_viewmodel.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -15,6 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  final _viewModel = RegisterViewModel();
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -168,7 +170,45 @@ class _RegisterScreenState extends State<RegisterScreen> {
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                final name = _nameController.text.trim();
+                final email = _emailController.text.trim();
+                final password = _passwordController.text.trim();
+                final confirmPassword = _confirmPasswordController.text.trim();
+
+                if (name.isEmpty || email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Semua field wajib diisi')),
+                  );
+                  return;
+                }
+                if (!email.contains('@')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Email tidak valid')),
+                  );
+                  return;
+                }
+                if (password.length < 6) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Password minimal 6 karakter')),
+                  );
+                  return;
+                }
+                if (password != confirmPassword) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Konfirmasi password tidak cocok')),
+                  );
+                  return;
+                }
+                final success = await _viewModel.register(name, email, password);
+                if (success) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(_viewModel.errorMessage ?? 'Registration failed')),
+                  );
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -191,4 +231,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

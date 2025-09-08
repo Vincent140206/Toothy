@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:toothy/views/onboarding/view/onboarding_screen_template.dart';
+import 'onboarding_screen_template.dart';
 
 class OnboardingView extends StatefulWidget {
   const OnboardingView({super.key});

@@ -1,7 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import '../../../core/widgets/background.dart';
-import '../../../core/widgets/custom_textfield.dart';
+
+import '../../../../core/widgets/background.dart';
+import '../../../../core/widgets/custom_textfield.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

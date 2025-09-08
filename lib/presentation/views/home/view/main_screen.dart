@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:toothy/views/home/view/widgets/bottom_navbar.dart';
-import 'package:toothy/views/main/placeholder_screen.dart';
+import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
+import '../../main/placeholder_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
