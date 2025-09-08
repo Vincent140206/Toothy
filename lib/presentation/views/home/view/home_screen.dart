@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:toothy/core/utils/token_storage.dart';
 part 'widgets/home_app_bar.dart';
 part 'widgets/appointment_banner.dart';
 part 'widgets/top_dentist.dart';
 part 'widgets/news_section.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final TokenStorage tokenStorage = TokenStorage();
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +27,11 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Top Dentist',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Colors.black87,
                       ),
@@ -34,7 +39,11 @@ class HomeScreen extends StatelessWidget {
                     Spacer(),
                     Text(
                       'Lihat Semua',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(
                         color: Colors.blue,
                         fontWeight: FontWeight.w500,
                       ),
@@ -46,7 +55,11 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 30),
                 Text(
                   'Top Articles',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .titleLarge
+                      ?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
@@ -54,6 +67,13 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 const _NewsSection(),
                 const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () async {
+                    await TokenStorage.clearToken();
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },
+                  child: const Text('Logout'),
+                ),
               ],
             ),
           ),

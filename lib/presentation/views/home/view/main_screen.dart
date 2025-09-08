@@ -13,12 +13,12 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  static const List<Widget> _pages = <Widget>[
+  static final List<Widget> _pages = <Widget>[
     HomeScreen(),
-    PlaceholderScreen(title: 'Jadwal'),
-    PlaceholderScreen(title: 'Riwayat'),
-    PlaceholderScreen(title: 'Toko'),
-    PlaceholderScreen(title: 'Profil'),
+    const PlaceholderScreen(title: 'Jadwal'),
+    const PlaceholderScreen(title: 'Riwayat'),
+    const PlaceholderScreen(title: 'Toko'),
+    const PlaceholderScreen(title: 'Profil'),
   ];
 
   void _onItemTapped(int index) {
