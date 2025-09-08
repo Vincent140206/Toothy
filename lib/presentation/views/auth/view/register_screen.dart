@@ -200,6 +200,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   );
                   return;
                 }
+
                 final success = await _viewModel.register(name, email, password);
                 if (success) {
                   Navigator.pushNamed(context, '/login');
