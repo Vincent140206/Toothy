@@ -1,0 +1,7 @@
+class Urls {
+  static const String baseUrl = 'https://toothy-api.bccdev.id';
+  // Auth
+  static const String register = '$baseUrl/api/auth/register';
+  static const String login = '$baseUrl/api/auth/login';
+  static const String checkSession = '$baseUrl/api/auth/session';
+}
