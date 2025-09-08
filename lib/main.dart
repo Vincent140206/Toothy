@@ -1,15 +1,19 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:toothy/views/auth/view/login_screen.dart';
-import 'package:toothy/views/auth/view/register_screen.dart';
-import 'package:toothy/views/home/view/home_screen.dart';
-import 'package:toothy/views/home/view/main_screen.dart';
-import 'package:toothy/views/onboarding/view/onboarding_view.dart';
-import 'package:toothy/views/splashscreen/splashscreen_view.dart';
+import 'package:toothy/presentation/views/auth/view/login_screen.dart';
+import 'package:toothy/presentation/views/auth/view/register_screen.dart';
+import 'package:toothy/presentation/views/home/view/home_screen.dart';
+import 'package:toothy/presentation/views/home/view/main_screen.dart';
+import 'package:toothy/presentation/views/onboarding/view/onboarding_view.dart';
+import 'package:toothy/presentation/views/splashscreen/splashscreen_view.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(
+    navigatorKey: navigatorKey,
+    home: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
-
+import '../../main.dart';
+import '../../presentation/views/auth/view/login_screen.dart';
 import '../constants/url.dart';
 import '../utils/token_storage.dart';
+import 'package:flutter/material.dart';
 
 
 class DioClient {
@@ -17,15 +19,31 @@ class DioClient {
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
       headers: {'Content-Type': 'application/json'},
-    )) ..interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = await TokenStorage.getToken();
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        return handler.next(options);
-      },
-    ));
+    )) ..interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await TokenStorage.getToken();
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+        onError: (DioError err, handler) async {
+          if (err.response?.statusCode == 401) {
+            final message = err.response?.data['message'] ?? '';
+
+            if (message.contains('Invalid token') || message.contains('No token provided')) {
+              await TokenStorage.clearToken();
+              navigatorKey.currentState?.pushAndRemoveUntil(
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    (route) => false,
+              );
+            }
+          }
+          return handler.next(err);
+        },
+      ),
+    );
 
     return DioClient._internal(dio);
   }
