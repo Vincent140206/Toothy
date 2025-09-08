@@ -1,8 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import '../../presentation/views/auth/view/login_screen.dart';
-import '../../presentation/views/home/view/main_screen.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
 
@@ -10,55 +8,23 @@ class AuthServices {
   final dioClient = DioClient();
   Urls urls = Urls();
 
-  Future<void> checkLoginStatus(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+  Future<void> checkSession(BuildContext context) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
 
-    void _goToLogin() {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
-      );
-    }
+      final bool isValid = token != null;
 
-    if (token != null) {
-      try {
-        final response = await dioClient.dio.get(Urls.checkSession);
-
-        if (response.statusCode == 201) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => MainScreen()),
-          );
-        } else if (response.statusCode == 401) {
-          final message = response.data['message'] ?? '';
-
-          if (message.contains('Invalid token')) {
-            await prefs.clear();
-            _goToLogin();
-          } else if (message.contains('No token provided')) {
-            _goToLogin();
-          } else {
-            await prefs.clear();
-            _goToLogin();
-          }
-        } else {
-          await prefs.clear();
-          _goToLogin();
-        }
-      } on DioError catch (e) {
-        debugPrint("DioError checkLoginStatus: ${e.response?.data}");
-        await prefs.clear();
-        _goToLogin();
-      } catch (e) {
-        debugPrint("Error checkLoginStatus: $e");
-        await prefs.clear();
-        _goToLogin();
+      if (isValid) {
+        await Navigator.pushReplacementNamed(context, '/main');
+      } else {
+        await Navigator.pushReplacementNamed(context, '/login');
       }
-    } else {
-      _goToLogin();
+    } catch (e) {
+      await Navigator.pushReplacementNamed(context, '/login');
     }
   }
+
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -69,9 +35,19 @@ class AuthServices {
 
       if (response.statusCode == 200) {
         final data = response.data;
+        final token = data['data']?['token']?.toString();
+
+        if (token == null || token.isEmpty) {
+          return {
+            'success': false,
+            'message': 'Token tidak ditemukan di response'
+          };
+        }
+
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', data['token']);
-        return {'success': true, 'data': response.data};
+        prefs.setString('token', token);
+
+        return {'success': true, 'token': token};
       } else {
         return {'success': false, 'message': 'Login failed'};
       }
@@ -143,6 +119,4 @@ class AuthServices {
       return {'success': false, 'message': 'An error occurred'};
     }
   }
-
-
 }

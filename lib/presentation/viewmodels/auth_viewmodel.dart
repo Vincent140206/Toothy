@@ -27,18 +27,29 @@ class RegisterViewModel extends ChangeNotifier {
 
 class LoginViewModel {
   final AuthServices _loginService = AuthServices();
+  String? errorMessage;
 
   Future<bool> login(String email, String password) async {
     try {
       final result = await _loginService.login(email, password);
-      final token = result['token'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', token);
 
-      return true;
+      if (result['success'] == true) {
+        final token = result['token']?.toString();
+        if (token == null || token.isEmpty) {
+          errorMessage = 'Token kosong';
+          return false;
+        }
+
+        print('Token tersimpan: $token');
+        return true;
+      } else {
+        errorMessage = result['message'] ?? 'Login gagal';
+        return false;
+      }
     } catch (e) {
-      print('Login gagal: $e');
+      errorMessage = 'Terjadi kesalahan: $e';
       return false;
     }
   }
+
 }
