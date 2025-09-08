@@ -10,9 +10,11 @@ import 'package:toothy/presentation/views/splashscreen/splashscreen_view.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() {
-  runApp(MaterialApp(
-    navigatorKey: navigatorKey,
-    home: const MyApp(),
+  runApp(
+      MaterialApp(
+        navigatorKey: navigatorKey,
+        home: const MyApp(),
+        debugShowCheckedModeBanner: false,
   ));
 }
 
@@ -33,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/onboarding': (context) => const OnboardingView(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-        '/home': (context) => const HomeScreen(),
+        '/home': (context) => HomeScreen(),
         '/main': (context) => const MainScreen(),
       },
     );
