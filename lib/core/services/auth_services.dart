@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import '../../data/models/user.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
 
@@ -36,6 +37,8 @@ class AuthServices {
       if (response.statusCode == 200) {
         final data = response.data;
         final token = data['data']?['token']?.toString();
+        final user = User.fromJson(data['data']?['user'] ?? {});
+        print(user);
 
         if (token == null || token.isEmpty) {
           return {

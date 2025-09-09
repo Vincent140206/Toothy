@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import '../../data/models/clinic.dart';
 import '../constants/url.dart';
