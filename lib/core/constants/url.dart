@@ -4,4 +4,7 @@ class Urls {
   static const String register = '$baseUrl/api/auth/register';
   static const String login = '$baseUrl/api/auth/login';
   static const String checkSession = '$baseUrl/api/auth/session';
+  // Clinics
+  static const String getClinics = '$baseUrl/api/clinics';
+  static const String getSpecificClinics = '$baseUrl/api/clinics/';
 }
