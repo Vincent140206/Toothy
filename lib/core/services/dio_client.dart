@@ -18,6 +18,7 @@ class DioClient {
       baseUrl: 'https://$baseUrl/',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 10),
+      validateStatus: (status) => status! < 500,
       headers: {'Content-Type': 'application/json'},
     )) ..interceptors.add(
       InterceptorsWrapper(

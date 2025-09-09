@@ -1,6 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../core/services/auth_services.dart';
 
 class RegisterViewModel extends ChangeNotifier {

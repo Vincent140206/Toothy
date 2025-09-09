@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:toothy/core/services/clinics_services.dart';
 import 'package:toothy/core/utils/token_storage.dart';
+import 'package:toothy/presentation/viewmodels/clinic_viewmodel.dart';
 part 'widgets/home_app_bar.dart';
 part 'widgets/appointment_banner.dart';
 part 'widgets/top_dentist.dart';
@@ -7,6 +9,7 @@ part 'widgets/news_section.dart';
 
 class HomeScreen extends StatelessWidget {
   final TokenStorage tokenStorage = TokenStorage();
+  final ClinicViewModel clinicViewModel = ClinicViewModel();
   HomeScreen({super.key});
 
   @override
@@ -73,6 +76,20 @@ class HomeScreen extends StatelessWidget {
                     Navigator.pushReplacementNamed(context, '/login');
                   },
                   child: const Text('Logout'),
+                ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    await ClinicViewModel().getClinics();
+                  },
+                  child: const Text('get clinic'),
+                ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    await ClinicViewModel().getSpecificClinics('1');
+                  },
+                  child: const Text('get specific clinic'),
                 ),
               ],
             ),
