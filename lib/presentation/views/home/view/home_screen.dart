@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:toothy/core/services/clinics_services.dart';
 import 'package:toothy/core/utils/token_storage.dart';
 import 'package:toothy/presentation/viewmodels/clinic_viewmodel.dart';
+import 'package:toothy/presentation/viewmodels/doctor_viewmodel.dart';
 part 'widgets/home_app_bar.dart';
 part 'widgets/appointment_banner.dart';
 part 'widgets/top_dentist.dart';
@@ -10,6 +10,7 @@ part 'widgets/news_section.dart';
 class HomeScreen extends StatelessWidget {
   final TokenStorage tokenStorage = TokenStorage();
   final ClinicViewModel clinicViewModel = ClinicViewModel();
+  final DoctorViewModel doctorViewModel = DoctorViewModel();
   HomeScreen({super.key});
 
   @override
@@ -90,6 +91,20 @@ class HomeScreen extends StatelessWidget {
                     await ClinicViewModel().getSpecificClinics('1');
                   },
                   child: const Text('get specific clinic'),
+                ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    await DoctorViewModel().getAllDoctors();
+                  },
+                  child: const Text('get all doctor'),
+                ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    await DoctorViewModel().getSpecificDoctors();
+                  },
+                  child: const Text('get Specific doctor'),
                 ),
               ],
             ),
