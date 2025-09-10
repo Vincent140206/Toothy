@@ -1,14 +1,14 @@
 class Clinic {
-  final int id;
+  final String id;
   final String name;
   final String photo_url;
   final double location_longitude;
   final double location_latitude;
   final String address;
-  final DateTime open_time;
-  final DateTime close_time;
-  final DateTime created_at;
-  final DateTime updated_at;
+  final String open_time;
+  final String close_time;
+  final String created_at;
+  final String updated_at;
 
   Clinic({
     required this.id,
@@ -31,10 +31,10 @@ class Clinic {
       location_longitude: (json['location_longitude'] as num).toDouble(),
       location_latitude: (json['location_latitude'] as num).toDouble(),
       address: json['address'],
-      open_time: DateTime.parse(json['open_time']),
-      close_time: DateTime.parse(json['close_time']),
-      created_at: DateTime.parse(json['created_at']),
-      updated_at: DateTime.parse(json['updated_at']),
+      open_time: json['open_time'],
+      close_time: json['close_time'],
+      created_at: json['created_at'],
+      updated_at: json['updated_at'],
     );
   }
 }

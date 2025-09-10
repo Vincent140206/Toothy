@@ -5,42 +5,42 @@ class _TopDentist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> dentists = [
-      {
-        'picture': 'assets/images/Dentist1.png',
-        'name': 'Drg. Ali Subagyo',
-        'specialist': 'Scaling, Tambal Gigi, Cabut Gigi',
-        'rating': '95',
-        'experiences': '6',
-      },
-      {
-        'picture': 'assets/images/Dentist2.png',
-        'name': 'Drg. Lina Rosalita',
-        'specialist': 'Scaling, Tambal Gigi',
-        'rating': '95',
-        'experiences': '8',
-      },
-      {
-        'picture': 'assets/images/Dentist3.png',
-        'name': 'Dr. Siwon Suhendri',
-        'specialist': 'Gigi Palsu, Behel',
-        'rating': '95',
-        'experiences': '5',
-      },
-    ];
-    return Column(
-      children: dentists.map((dentistData) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12.0),
-          child: _TopDentistCard(
-            picture: dentistData['picture'],
-            name: dentistData['name'],
-            specialist: dentistData['specialist'],
-            rating: dentistData['rating'],
-            experiences: dentistData['experiences'],
-          ),
+    final doctorService = DoctorServices();
+
+    return FutureBuilder<List<Doctor>>(
+      future: doctorService.getAllDoctors(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        var doctors = snapshot.data ?? [];
+
+        if (doctors.isEmpty) {
+          return const Center(child: Text("Tidak ada data dokter"));
+        }
+
+        doctors = doctors.take(3).toList();
+
+        return Column(
+          children: doctors.map((doctor) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: _TopDentistCard(
+                picture: doctor.profile_photo_url ?? "",
+                name: doctor.name,
+                specialist: doctor.specialists.isNotEmpty
+                    ? doctor.specialists.map((s) => s.title).join(", ")
+                    : "Dokter Gigi Umum",
+                experiences: doctor.years_experience.toString(),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 }
@@ -49,14 +49,12 @@ class _TopDentistCard extends StatelessWidget {
   final String picture;
   final String name;
   final String specialist;
-  final String rating;
   final String experiences;
 
   const _TopDentistCard({
     required this.picture,
     required this.name,
     required this.specialist,
-    required this.rating,
     required this.experiences,
   });
 
@@ -73,10 +71,10 @@ class _TopDentistCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Color(0xffE9FAFF),
+            color: const Color(0xffE9FAFF),
             spreadRadius: 10,
             blurRadius: 10,
-            offset: const Offset(0,4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -85,11 +83,19 @@ class _TopDentistCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
+            child: Image.network(
               picture,
               width: screenWidth * 0.22,
               height: screenWidth * 0.22,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  width: screenWidth * 0.22,
+                  height: screenWidth * 0.22,
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.person, size: 40, color: Colors.grey),
+                );
+              },
             ),
           ),
           SizedBox(width: screenWidth * 0.04),
@@ -107,7 +113,8 @@ class _TopDentistCard extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400, size: 30),
+                    Icon(Icons.chevron_right_rounded,
+                        color: Colors.grey.shade400, size: 30),
                   ],
                 ),
                 Text(
@@ -117,14 +124,15 @@ class _TopDentistCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Colors.grey[600],
                     fontSize: screenWidth * 0.032,
-                    fontStyle: FontStyle.italic
+                    fontStyle: FontStyle.italic,
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.01),
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 3),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.grey.shade500),
@@ -132,28 +140,12 @@ class _TopDentistCard extends StatelessWidget {
                       child: Row(
                         children: [
                           const Icon(Icons.cases_rounded, size: 16),
-                          SizedBox(width: 4),
+                          const SizedBox(width: 4),
                           Text('$experiences tahun'),
-                          SizedBox(width: 5),
                         ],
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.grey.shade500),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.thumb_up_alt_rounded, size: 16),
-                          SizedBox(width: 4),
-                          Text('$rating%'),
-                          SizedBox(width: 5),
-                        ],
-                      ),
-                    ),
+                    const SizedBox(width: 8),
                   ],
                 ),
               ],
