@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:toothy/core/services/auth_services.dart';
 
 import '../../../../core/widgets/background.dart';
 import '../../../../core/widgets/custom_textfield.dart';
@@ -16,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
-  final _viewModel = LoginViewModel();
+  final authService = AuthServices();
 
   @override
   void dispose() {
@@ -154,31 +155,26 @@ class _LoginScreenState extends State<LoginScreen> {
             height: 50,
             child: ElevatedButton(
               onPressed: () async {
-                final email = _emailController.text;
-                final password = _passwordController.text;
-                if (email.isEmpty || password.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Email dan password wajib di isi')),
-                  );
-                  return;
-                }
+                final result = await authService.login(
+                  _emailController.text.trim(),
+                  _passwordController.text.trim(),
+                );
 
-                if (!email.contains('@')) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Email tidak valid')),
-                  );
-                  return;
-                }
-
-                final success = await _viewModel.login(email, password);
-                if (success) {
-                  if (context.mounted) {
+                if (result['success']) {
+                  final sessionValid = await authService.checkSession();
+                  if (sessionValid && context.mounted) {
                     Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Session tidak valid")),
+                      );
+                    }
                   }
                 } else {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(_viewModel.errorMessage ?? 'Gagal masuk')),
+                      SnackBar(content: Text(result['message'] ?? "Login gagal")),
                     );
                   }
                 }

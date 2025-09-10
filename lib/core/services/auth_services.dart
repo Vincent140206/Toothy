@@ -3,26 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import '../../data/models/user.dart';
 import '../constants/url.dart';
+import '../utils/user_storage.dart';
 import 'dio_client.dart';
 
 class AuthServices {
   final dioClient = DioClient();
   Urls urls = Urls();
 
-  Future<void> checkSession(BuildContext context) async {
+  Future<bool> checkSession() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token');
+      print("DEBUG checkSession: token=$token");
 
-      final bool isValid = token != null;
+      if (token != null) {
+        final response = await dioClient.dio.get(
+          Urls.checkSession,
+          options: Options(headers: {"Authorization": "Bearer $token"}),
+        );
 
-      if (isValid) {
-        await Navigator.pushReplacementNamed(context, '/main');
-      } else {
-        await Navigator.pushReplacementNamed(context, '/login');
+        if (response.statusCode == 200) {
+          final data = response.data['data'];
+          final user = User.fromJson(data);
+          await UserStorage.saveUser(user);
+          return true;
+        }
       }
+      return false;
     } catch (e) {
-      await Navigator.pushReplacementNamed(context, '/login');
+      print("DEBUG checkSession error: $e");
+      return false;
     }
   }
 
@@ -37,8 +47,6 @@ class AuthServices {
       if (response.statusCode == 200) {
         final data = response.data;
         final token = data['data']?['token']?.toString();
-        final user = User.fromJson(data['data']?['user'] ?? {});
-        print(user);
 
         if (token == null || token.isEmpty) {
           return {
@@ -48,33 +56,21 @@ class AuthServices {
         }
 
         final prefs = await SharedPreferences.getInstance();
-        prefs.setString('token', token);
+        await prefs.setString('token', token);
 
         return {'success': true, 'token': token};
       } else {
         return {'success': false, 'message': 'Login failed'};
       }
     } on DioError catch (e) {
-      debugPrint("DioError login: ${e.response?.data}");
       final data = e.response?.data;
-
-      String message = 'Login failed';
-      if (data != null) {
-        if (data['errors'] != null && data['errors'] is List) {
-          message = (data['errors'] as List)
-              .map((err) => err['message'])
-              .join(', ');
-        } else if (data['message'] != null) {
-          message = data['message'];
-        }
-      }
-
+      String message = data?['message'] ?? 'Login failed';
       return {'success': false, 'message': message};
     } catch (e) {
-      debugPrint("Error login: $e");
       return {'success': false, 'message': 'An error occurred'};
     }
   }
+
 
   Future<Map<String, dynamic>> register(
       String name, String email, String password) async {

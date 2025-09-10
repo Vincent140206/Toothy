@@ -1,40 +1,55 @@
 class User {
-  final full_name;
-  final email;
-  final password;
-  final phone_number;
-  final birth_date;
-  final photo_url;
-  final role;
-  final created_at;
-  final updated_at;
-  final id;
+  final String? id;
+  final String? fullName;
+  final String? email;
+  final String? password;
+  final String? phoneNumber;
+  final String? birthDate;
+  final String? photoUrl;
+  final String? role;
+  final String? createdAt;
+  final String? updatedAt;
 
   User({
-    required this.id,
-    required this.full_name,
-    required this.email,
-    required this.password,
-    required this.phone_number,
-    required this.birth_date,
-    required this.photo_url,
-    required this.role,
-    required this.created_at,
-    required this.updated_at,
+    this.id,
+    this.fullName,
+    this.email,
+    this.password,
+    this.phoneNumber,
+    this.birthDate,
+    this.photoUrl,
+    this.role,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
-      full_name: json['full_name'],
+      fullName: json['full_name'],
       email: json['email'],
       password: json['password'],
-      phone_number: json['phone_number'],
-      birth_date: json['birth_date'],
-      photo_url: json['photo_url'],
+      phoneNumber: json['phone_number'],
+      birthDate: json['birth_date'],
+      photoUrl: json['photo_url'],
       role: json['role'],
-      created_at: json['created_at'],
-      updated_at: json['updated_at'],
+      createdAt: json['created_at'],
+      updatedAt: json['updated_at'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'full_name': fullName,
+      'email': email,
+      'password': password,
+      'phone_number': phoneNumber,
+      'birth_date': birthDate,
+      'photo_url': photoUrl,
+      'role': role,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
   }
 }

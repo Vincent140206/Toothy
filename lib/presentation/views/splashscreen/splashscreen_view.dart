@@ -16,9 +16,18 @@ class _SplashscreenViewState extends State<SplashscreenView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(seconds: 3));
-      _authService.checkSession(context);
+
+      final sessionValid = await _authService.checkSession();
+      if (!mounted) return;
+
+      if (sessionValid) {
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+      } else {
+        Navigator.pushNamedAndRemoveUntil(context, '/onboarding', (route) => false);
+      }
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

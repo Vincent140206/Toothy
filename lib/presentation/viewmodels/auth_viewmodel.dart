@@ -30,9 +30,10 @@ class LoginViewModel {
   Future<bool> login(String email, String password) async {
     try {
       final result = await _loginService.login(email, password);
-
       if (result['success'] == true) {
         final token = result['token']?.toString();
+        print("Login success");
+
         if (token == null || token.isEmpty) {
           errorMessage = 'Token kosong';
           return false;
@@ -41,6 +42,7 @@ class LoginViewModel {
         print('Token tersimpan: $token');
         return true;
       } else {
+        print("login gagal");
         errorMessage = result['message'] ?? 'Login gagal';
         return false;
       }

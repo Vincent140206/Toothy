@@ -10,50 +10,64 @@ class _HomeAppBar extends StatelessWidget {
         .size
         .width;
 
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: screenWidth * 0.06,
-          backgroundColor: const Color(0xFF007FFF),
-          child: CircleAvatar(
-            radius: screenWidth * 0.055,
-            backgroundImage:
-            const AssetImage('assets/images/ProfilePic.png'),
-          ),
-        ),
-        SizedBox(width: screenWidth * 0.04),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Halo!',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(
-                  color: Colors.grey[600],
-                  fontSize: screenWidth * 0.035,
-                ),
+    return FutureBuilder<User?>(
+      future: UserStorage.getUser(),
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        final userName = user?.fullName ?? "Pengguna";
+        final photoUrl = user?.photoUrl;
+
+        return Row(
+          children: [
+            CircleAvatar(
+              radius: screenWidth * 0.06,
+              backgroundColor: const Color(0xFF007FFF),
+              child: CircleAvatar(
+                radius: screenWidth * 0.055,
+                backgroundImage: photoUrl != null && photoUrl.isNotEmpty
+                    ? NetworkImage(photoUrl)
+                    : const AssetImage('assets/images/ProfilePic.png')
+                as ImageProvider,
               ),
-              Text(
-                'Alexandra Pritha',
-                style: Theme
-                    .of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  fontSize: screenWidth * 0.045,
-                ),
+            ),
+            SizedBox(width: screenWidth * 0.04),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Halo!',
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(
+                      color: Colors.grey[600],
+                      fontSize: screenWidth * 0.035,
+                    ),
+                  ),
+                  Text(
+                    userName,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleMedium
+                        ?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                      fontSize: screenWidth * 0.045,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        Image.asset('assets/images/AppBar_HomeScreen.png', width: screenWidth * 0.3)
-      ],
+            ),
+            Image.asset(
+              'assets/images/AppBar_HomeScreen.png',
+              width: screenWidth * 0.3,
+            )
+          ],
+        );
+      },
     );
   }
 }
