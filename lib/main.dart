@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:toothy/presentation/views/auth/view/login_screen.dart';
 import 'package:toothy/presentation/views/auth/view/register_screen.dart';
+import 'package:toothy/presentation/views/clinic_all.dart';
 import 'package:toothy/presentation/views/dentist_list.dart';
 import 'package:toothy/presentation/views/home/view/home_screen.dart';
 import 'package:toothy/presentation/views/home/view/main_screen.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeScreen(),
         '/main': (context) => const MainScreen(),
         '/dentist-list': (context) => const DentistListView(),
+        '/clinic-list': (context) => const ClinicAllView(),
       },
     );
   }

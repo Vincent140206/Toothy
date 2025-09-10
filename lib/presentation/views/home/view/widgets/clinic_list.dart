@@ -1,14 +1,14 @@
 part of '../home_screen.dart';
 
-class _TopDentist extends StatelessWidget {
-  const _TopDentist({super.key});
+class _ClinicList extends StatelessWidget {
+  const _ClinicList({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final doctorService = DoctorServices();
+    final clinicService = ClinicsServices();
 
-    return FutureBuilder<List<Doctor>>(
-      future: doctorService.getAllDoctors(),
+    return FutureBuilder<List<Clinic>>(
+      future: clinicService.getClinics(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -17,32 +17,32 @@ class _TopDentist extends StatelessWidget {
           return Center(child: Text("Error: ${snapshot.error}"));
         }
 
-        var doctors = snapshot.data ?? [];
+        var clinics = snapshot.data ?? [];
 
-        if (doctors.isEmpty) {
+        if (clinics.isEmpty) {
           return const Center(child: Text("Tidak ada data dokter"));
         }
 
-        doctors = doctors.take(3).toList();
+        clinics = clinics.take(3).toList();
 
         return Column(
-          children: doctors.map((doctor) {
+          children: clinics.map((clinics) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12.0),
-              child: TopDentistCard(
-                picture: doctor.profile_photo_url ?? "",
-                name: doctor.name,
-                specialist: doctor.specialists.isNotEmpty
-                    ? doctor.specialists.map((s) => s.title).join(", ")
-                    : "Dokter Gigi Umum",
-                experiences: doctor.years_experience.toString(),
+              child: ClinicListCard(
+                photo_url: clinics.photo_url ?? "",
+                name: clinics.name,
+                address: clinics.address,
+                open_time: clinics.open_time,
+                close_time: clinics.close_time,
+                id: clinics.id,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(doctor: doctor),
-                    ),
-                  );
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (_) => AppointmentScreen(doctor: doctor),
+                  //   ),
+                  // );
                 },
               ),
             );
@@ -53,25 +53,35 @@ class _TopDentist extends StatelessWidget {
   }
 }
 
-class TopDentistCard extends StatelessWidget {
-  final String picture;
+class ClinicListCard extends StatelessWidget {
+  final String id;
   final String name;
-  final String specialist;
-  final String experiences;
+  final String photo_url;
+  final String address;
+  final String open_time;
+  final String close_time;
   final VoidCallback? onTap;
 
-  const TopDentistCard({
-    required this.picture,
+  const ClinicListCard({
+    required this.id,
     required this.name,
-    required this.specialist,
-    required this.experiences,
+    required this.photo_url,
+    required this.address,
+    required this.open_time,
+    required this.close_time,
     this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery
+        .of(context)
+        .size
+        .width;
+    final screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return GestureDetector(
       onTap: onTap,
@@ -96,7 +106,7 @@ class TopDentistCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                picture,
+                photo_url,
                 width: screenWidth * 0.22,
                 height: screenWidth * 0.22,
                 fit: BoxFit.cover,
@@ -105,7 +115,8 @@ class TopDentistCard extends StatelessWidget {
                     width: screenWidth * 0.22,
                     height: screenWidth * 0.22,
                     color: Colors.grey[200],
-                    child: const Icon(Icons.person, size: 40, color: Colors.grey),
+                    child: const Icon(
+                        Icons.person, size: 40, color: Colors.grey),
                   );
                 },
               ),
@@ -122,7 +133,11 @@ class TopDentistCard extends StatelessWidget {
                           name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          style: Theme
+                              .of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(
                             fontWeight: FontWeight.bold,
                             fontSize: screenWidth * 0.04,
                           ),
@@ -133,10 +148,14 @@ class TopDentistCard extends StatelessWidget {
                     ],
                   ),
                   Text(
-                    specialist,
+                    address,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(
                       color: Colors.grey[600],
                       fontSize: screenWidth * 0.032,
                       fontStyle: FontStyle.italic,
@@ -145,24 +164,21 @@ class TopDentistCard extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.01),
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 3),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.grey.shade500),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.cases_rounded, size: 16),
-                            const SizedBox(width: 4),
-                            Text('$experiences tahun'),
-                          ],
+                      Icon(Icons.access_time, size: screenWidth * 0.04, color: Colors.grey[600]),
+                      SizedBox(width: screenWidth * 0.02),
+                      Text(
+                        '$open_time - $close_time',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                          color: Colors.grey[600],
+                          fontSize: screenWidth * 0.032,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                    ],
-                  ),
+                    ]
+                  )
                 ],
               ),
             ),

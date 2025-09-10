@@ -7,7 +7,7 @@ class ClinicsServices {
   final dioClient = DioClient();
   Urls urls = Urls();
 
-  Future<void> getClinics() async {
+  Future<List<Clinic>> getClinics() async {
     try {
       final response = await dioClient.dio.get(Urls.getClinics);
 
@@ -17,11 +17,12 @@ class ClinicsServices {
 
         print('Fetched ${clinics.length} clinics');
         clinics.forEach((c) => print(c.name));
+        return data.map((json) => Clinic.fromJson(json)).toList();
       } else {
-        print('Failed to fetch clinics');
+        throw Exception('Failed to fetch doctors');
       }
     } catch (e) {
-      print('Error fetching clinics: $e');
+      throw Exception('Failed to fetch doctors');
     }
   }
 

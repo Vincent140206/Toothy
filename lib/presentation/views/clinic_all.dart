@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../core/services/doctor_services.dart';
-import '../../data/models/doctor.dart';
-import 'package:toothy/presentation/views/home/view/home_screen.dart'
-    show TopDentistCard;
-import 'appointment_screen.dart';
+import 'package:toothy/core/services/clinics_services.dart';
+import 'package:toothy/data/models/clinic.dart';
+import 'package:toothy/presentation/views/home/view/home_screen.dart' show ClinicListCard;
 
-class DentistListView extends StatefulWidget {
-  const DentistListView({super.key});
+class ClinicAllView extends StatefulWidget {
+  const ClinicAllView({super.key});
 
   @override
-  State<DentistListView> createState() => _DentistListViewState();
+  State<ClinicAllView> createState() => _ClinicAllViewState();
 }
 
-class _DentistListViewState extends State<DentistListView> {
-  final doctorService = DoctorServices();
+class _ClinicAllViewState extends State<ClinicAllView> {
+  final clinicServices = ClinicsServices();
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
     double titleFontSize = screenWidth * 0.05;
     double backFontSize = screenWidth * 0.04;
     double imageSize = screenWidth * 0.3;
@@ -27,8 +24,8 @@ class _DentistListViewState extends State<DentistListView> {
     return Scaffold(
       backgroundColor: const Color(0XFFE9FAFF),
       body: SafeArea(
-        child: FutureBuilder<List<Doctor>>(
-          future: doctorService.getAllDoctors(),
+        child: FutureBuilder<List<Clinic>>(
+          future: clinicServices.getClinics(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -37,9 +34,9 @@ class _DentistListViewState extends State<DentistListView> {
               return Center(child: Text("Error: ${snapshot.error}"));
             }
 
-            var doctors = snapshot.data ?? [];
-            if (doctors.isEmpty) {
-              return const Center(child: Text("Tidak ada data dokter"));
+            var clinics = snapshot.data ?? [];
+            if (clinics.isEmpty) {
+              return const Center(child: Text("Tidak ada data klinik"));
             }
 
             return CustomScrollView(
@@ -79,7 +76,7 @@ class _DentistListViewState extends State<DentistListView> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Daftar Dokter Toothy",
+                          "Daftar Klinik Toothy",
                           style: TextStyle(
                             fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
@@ -95,31 +92,23 @@ class _DentistListViewState extends State<DentistListView> {
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                        final doctor = doctors[index];
+                        final clinic = clinics[index];
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
-                          child: TopDentistCard(
-                            picture: doctor.profile_photo_url ?? "",
-                            name: doctor.name,
-                            specialist: doctor.specialists.isNotEmpty
-                                ? doctor.specialists
-                                .map((s) => s.title)
-                                .join(", ")
-                                : "Dokter Gigi Umum",
-                            experiences: doctor.years_experience.toString(),
+                          child: ClinicListCard(
+                            id: clinic.id,
+                            photo_url: clinic.photo_url ?? "",
+                            name: clinic.name,
+                            address: clinic.address,
+                            open_time: clinic.open_time,
+                            close_time: clinic.close_time,
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AppointmentScreen(doctor: doctor),
-                                ),
-                              );
+                              // TODO: Navigasi ke detail
                             },
                           ),
                         );
                       },
-                      childCount: doctors.length,
+                      childCount: clinics.length,
                     ),
                   ),
                 ),

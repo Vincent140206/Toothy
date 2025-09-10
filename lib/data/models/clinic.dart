@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Clinic {
   final String id;
   final String name;
@@ -31,8 +33,12 @@ class Clinic {
       location_longitude: (json['location_longitude'] as num).toDouble(),
       location_latitude: (json['location_latitude'] as num).toDouble(),
       address: json['address'],
-      open_time: json['open_time'],
-      close_time: json['close_time'],
+      open_time: DateFormat.Hm().format(
+          DateTime.parse(json['open_time']).toUtc().add(const Duration(hours: 7))
+      ),
+      close_time: DateFormat.Hm().format(
+          DateTime.parse(json['close_time']).toUtc().add(const Duration(hours: 7))
+      ),
       created_at: json['created_at'],
       updated_at: json['updated_at'],
     );
