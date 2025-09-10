@@ -29,7 +29,7 @@ class _TopDentist extends StatelessWidget {
           children: doctors.map((doctor) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12.0),
-              child: _TopDentistCard(
+              child: TopDentistCard(
                 picture: doctor.profile_photo_url ?? "",
                 name: doctor.name,
                 specialist: doctor.specialists.isNotEmpty
@@ -45,13 +45,13 @@ class _TopDentist extends StatelessWidget {
   }
 }
 
-class _TopDentistCard extends StatelessWidget {
+class TopDentistCard extends StatelessWidget {
   final String picture;
   final String name;
   final String specialist;
   final String experiences;
 
-  const _TopDentistCard({
+  const TopDentistCard({
     required this.picture,
     required this.name,
     required this.specialist,
@@ -105,16 +105,18 @@ class _TopDentistCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Text(
-                      name,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: screenWidth * 0.04,
+                    Expanded(
+                      child: Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: screenWidth * 0.04,
+                        ),
                       ),
                     ),
-                    const Spacer(),
-                    Icon(Icons.chevron_right_rounded,
-                        color: Colors.grey.shade400, size: 30),
+                    Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400, size: 30),
                   ],
                 ),
                 Text(

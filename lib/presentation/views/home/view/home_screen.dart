@@ -44,15 +44,20 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     Spacer(),
-                    Text(
-                      'Lihat Semua',
-                      style: Theme
-                          .of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/dentist-list');
+                      },
+                      child: Text(
+                        'Lihat Semua',
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
