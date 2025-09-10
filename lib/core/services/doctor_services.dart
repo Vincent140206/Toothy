@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import '../../data/models/doctor.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
 
@@ -5,19 +8,18 @@ class DoctorServices {
   final dioClient = DioClient();
   Urls urls = Urls();
 
-  Future<void> getAllDoctors() async {
+  Future<List<Doctor>> getAllDoctors() async {
     try {
       final response = await dioClient.dio.get(Urls.getDoctors);
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        print('Fetched ${data.length} doctors');
-        data.forEach((doctor) => print(doctor['name']));
+        return data.map((json) => Doctor.fromJson(json)).toList();
       } else {
-        print('Failed to fetch doctors');
+        throw Exception('Failed to fetch doctors');
       }
     } catch (e) {
-      print('Error fetching doctors: $e');
+      throw Exception('Failed to fetch doctors');
     }
   }
 
