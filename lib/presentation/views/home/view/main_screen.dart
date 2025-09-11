@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
-import '../../main/placeholder_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -15,10 +15,10 @@ class _MainScreenState extends State<MainScreen> {
 
   static final List<Widget> _pages = <Widget>[
     HomeScreen(),
-    const PlaceholderScreen(title: 'Jadwal'),
-    const PlaceholderScreen(title: 'Riwayat'),
-    const PlaceholderScreen(title: 'Toko'),
-    const PlaceholderScreen(title: 'Profil'),
+    const ClinicMapView(),
+    const ClinicMapView(),
+    const ClinicMapView(),
+    const ClinicMapView(),
   ];
 
   void _onItemTapped(int index) {
@@ -29,15 +29,38 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    final fabSize = screenWidth * 0.18;
+    final fabIconSize = screenWidth * 0.08;
+    final fabOffset = screenHeight * 0.012;
+
     return Scaffold(
-      body: Center(
-        child: _pages.elementAt(_selectedIndex),
-      ),
+      backgroundColor: Colors.transparent,
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavBar(
         selectedIndex: _selectedIndex,
         onItemTapped: _onItemTapped,
       ),
+      floatingActionButton: Transform.translate(
+        offset: Offset(0, fabOffset),
+        child: SizedBox(
+          width: fabSize,
+          height: fabSize,
+          child: FloatingActionButton(
+            onPressed: () => _onItemTapped(2),
+            backgroundColor: Colors.white,
+            shape: const CircleBorder(),
+            child: Icon(
+              Icons.center_focus_strong_outlined,
+              size: fabIconSize,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
-

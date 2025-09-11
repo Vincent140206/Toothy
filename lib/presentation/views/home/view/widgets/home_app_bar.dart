@@ -47,12 +47,10 @@ class _HomeAppBar extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    userName,
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(
+                    userName.split(" ").length > 2
+                        ? '${userName.split(" ")[0]} ${userName.split(" ")[1]}'
+                        : userName,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
                       fontSize: screenWidth * 0.045,

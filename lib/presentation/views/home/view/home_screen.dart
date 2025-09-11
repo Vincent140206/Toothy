@@ -155,6 +155,13 @@ class HomeScreen extends StatelessWidget {
                   },
                   child: const Text('get Specific doctor'),
                 ),
+
+                ElevatedButton(
+                  onPressed: () async {
+                    Navigator.pushNamed(context, '/maps');
+                  },
+                  child: const Text('maps'),
+                ),
               ],
             ),
           ),
