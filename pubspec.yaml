@@ -4,6 +4,9 @@ description: "A new Flutter project."
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+dependency_overrides:
+  camera_android: 0.10.9+2
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -44,6 +47,7 @@ dependencies:
   latlong2: ^0.9.1
   url_launcher: ^6.3.2
   camera: ^0.11.2
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:

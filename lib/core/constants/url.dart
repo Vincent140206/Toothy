@@ -13,4 +13,8 @@ class Urls {
   // Articles
   static const String getArticles = '$baseUrl/api/articles';
   static const String getSpecificArticles = '$baseUrl/api/articles/';
+  // Report
+  static const String createReports = '$baseUrl/api/reports';
+  static const String getReports = '$baseUrl/api/reports/me';
+  static const String getSpecificReports = '$baseUrl/api/reports/';
 }

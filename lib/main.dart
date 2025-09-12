@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:toothy/presentation/viewmodels/tooth_scan_viewmodel.dart';
 import 'package:toothy/presentation/views/auth/view/login_screen.dart';
 import 'package:toothy/presentation/views/auth/view/register_screen.dart';
 import 'package:toothy/presentation/views/clinic_all.dart';
@@ -11,14 +13,22 @@ import 'package:toothy/presentation/views/onboarding/view/onboarding_view.dart';
 import 'package:toothy/presentation/views/splashscreen/splashscreen_view.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(
-      MaterialApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ToothScanViewModel()),
+      ],
+      child: MaterialApp(
         navigatorKey: navigatorKey,
         home: const MyApp(),
         debugShowCheckedModeBanner: false,
-  ));
+      ),
+    ),
+  );
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

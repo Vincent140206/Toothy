@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
+import 'package:toothy/presentation/views/toothScan/scan_result_screen.dart';
 import 'package:toothy/presentation/views/toothScan/tooth_scan_screen.dart';
 import 'home_screen.dart';
 
@@ -18,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     const ClinicMapView(),
     const ToothScanScreen(),
-    const ClinicMapView(),
+    const ScanResultScreen(),
     const ClinicMapView(),
   ];
 
