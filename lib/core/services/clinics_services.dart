@@ -19,10 +19,12 @@ class ClinicsServices {
         clinics.forEach((c) => print(c.name));
         return data.map((json) => Clinic.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to fetch doctors');
+        throw Exception('Failed to fetch clinics');
       }
-    } catch (e) {
-      throw Exception('Failed to fetch doctors');
+    } catch (e, stacktrace) {
+      print("Error getClinics: $e");
+      print(stacktrace);
+      throw Exception('Failed to fetch clinic: $e');
     }
   }
 

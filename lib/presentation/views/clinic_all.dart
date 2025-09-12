@@ -3,6 +3,8 @@ import 'package:toothy/core/services/clinics_services.dart';
 import 'package:toothy/data/models/clinic.dart';
 import 'package:toothy/presentation/views/home/view/home_screen.dart' show ClinicListCard;
 
+import 'home/view/widgets/clinic_list_card.dart';
+
 class ClinicAllView extends StatefulWidget {
   const ClinicAllView({super.key});
 
