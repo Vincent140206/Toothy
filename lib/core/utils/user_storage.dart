@@ -25,4 +25,5 @@ class UserStorage {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
 }

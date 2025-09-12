@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
+import 'package:toothy/presentation/views/tooth_scan_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -16,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   static final List<Widget> _pages = <Widget>[
     HomeScreen(),
     const ClinicMapView(),
-    const ClinicMapView(),
+    ToothScanScreen(),
     const ClinicMapView(),
     const ClinicMapView(),
   ];

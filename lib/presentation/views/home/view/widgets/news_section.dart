@@ -1,43 +1,42 @@
 part of '../home_screen.dart';
 
+
 class _NewsSection extends StatelessWidget {
   const _NewsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> newsData = [
-      {
-        'image': 'assets/images/Article1.png',
-        'category': 'Kesehatan Anak',
-        'title': 'Cara Merawat Gigi Anak dengan Benar',
-        'snippet': 'Kesehatan gigi anak adalah investasi untuk masa depan...',
-      },
-      {
-        'image': 'assets/images/Article2.png',
-        'category': 'Tips & Trik',
-        'title': 'Perawatan Pasca-Cabut Gigi',
-        'snippet': 'Harus dirawat biar gaharus cabut lagi...',
-      },
-      {
-        'image': 'assets/images/Article3.png',
-        'category': 'Tips & Trik',
-        'title': 'Mengenal Root-Canal',
-        'snippet': 'Yok belajar biar pinter bejir...',
-      },
-    ];
+    return FutureBuilder<List<Article>>(
+      future: ArticleServices().getArticles(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-    return ListView.separated(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: newsData.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 15),
-      itemBuilder: (context, index) {
-        final news = newsData[index];
-        return _NewsCard(
-          image: news['image']!,
-          category: news['category']!,
-          title: news['title']!,
-          snippet: news['snippet']!,
+        if (snapshot.hasError) {
+          return Center(child: Text("Error: ${snapshot.error}"));
+        }
+
+        final articles = snapshot.data ?? [];
+
+        if (articles.isEmpty) {
+          return const Center(child: Text("Belum ada artikel"));
+        }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: articles.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 15),
+          itemBuilder: (context, index) {
+            final article = articles[index];
+            return _NewsCard(
+              image: article.photoUrl,
+              category: "Artikel",
+              title: article.title,
+              snippet: article.content,
+            );
+          },
         );
       },
     );
@@ -116,7 +115,40 @@ class _NewsCard extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                        ),
+                        builder: (context) => DraggableScrollableSheet(
+                          expand: false,
+                          builder: (context, scrollController) {
+                            return SingleChildScrollView(
+                              controller: scrollController,
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    snippet,
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                     child: const Text(
                       'Baca Selengkapnya',
                       style: TextStyle(
@@ -126,6 +158,7 @@ class _NewsCard extends StatelessWidget {
                     ),
                   ),
                 ),
+
               ],
             ),
           ),

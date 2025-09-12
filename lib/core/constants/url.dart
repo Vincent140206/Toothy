@@ -10,4 +10,7 @@ class Urls {
   // Doctors
   static const String getDoctors = '$baseUrl/api/doctors';
   static const String getSpecificDoctors = '$baseUrl/api/doctors/';
+  // Articles
+  static const String getArticles = '$baseUrl/api/articles';
+  static const String getSpecificArticles = '$baseUrl/api/articles/';
 }
