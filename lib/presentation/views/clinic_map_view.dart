@@ -109,7 +109,7 @@ class _ClinicMapViewState extends State<ClinicMapView> {
                 children: [
                   TileLayer(
                     urlTemplate:
-                        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+                    "https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=tuGG8tXFeRLJAbcqUk1g",
                     userAgentPackageName: 'com.toothy.app',
                   ),
                   MarkerLayer(

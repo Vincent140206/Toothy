@@ -73,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                const _ClinicList(),
+                const _ClinicList(count: 3,),
                 SizedBox(height: 30,),
                 Row(
                   children: [

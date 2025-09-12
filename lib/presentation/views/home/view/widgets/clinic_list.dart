@@ -1,7 +1,8 @@
 part of '../home_screen.dart';
 
 class _ClinicList extends StatelessWidget {
-  const _ClinicList({super.key});
+  final int count;
+  const _ClinicList({super.key, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -27,13 +28,14 @@ class _ClinicList extends StatelessWidget {
           await StorageCommon.saveClinics(clinics);
         });
 
-        clinics = clinics.take(3).toList();
+        var displayClinics = clinics.take(count).toList();
 
         return Column(
-          children: clinics.map((clinics) {
+          children: displayClinics.map((clinics) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12.0),
               child: ClinicListCard(
+
                 photo_url: clinics.photo_url ?? "",
                 name: clinics.name,
                 address: clinics.address,
