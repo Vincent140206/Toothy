@@ -1,6 +1,5 @@
 part of '../home_screen.dart';
 
-
 class _NewsSection extends StatelessWidget {
   const _NewsSection({super.key});
 
@@ -26,7 +25,7 @@ class _NewsSection extends StatelessWidget {
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: articles.length,
+          itemCount: 4,
           separatorBuilder: (context, index) => const SizedBox(height: 15),
           itemBuilder: (context, index) {
             final article = articles[index];
@@ -81,7 +80,7 @@ class _NewsCard extends StatelessWidget {
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            child: Image.asset(
+            child: Image.network(
               image,
               width: double.infinity,
               height: screenWidth * 0.4,
@@ -99,18 +98,18 @@ class _NewsCard extends StatelessWidget {
                   title,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   snippet,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
@@ -119,34 +118,72 @@ class _NewsCard extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                        ),
-                        builder: (context) => DraggableScrollableSheet(
-                          expand: false,
-                          builder: (context, scrollController) {
-                            return SingleChildScrollView(
-                              controller: scrollController,
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    title,
-                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                        backgroundColor: Colors.transparent,
+                        builder: (context) {
+                          return DraggableScrollableSheet(
+                            initialChildSize: 0.85,
+                            minChildSize: 0.5,
+                            maxChildSize: 0.95,
+                            expand: false,
+                            builder: (_, scrollController) {
+                              return Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(24),
                                   ),
-                                  const SizedBox(height: 12),
-                                  Text(
-                                    snippet,
-                                    style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                                child: SingleChildScrollView(
+                                  controller: scrollController,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius:
+                                            const BorderRadius.vertical(
+                                              top: Radius.circular(24),
+                                            ),
+                                        child: Image.network(
+                                          image,
+                                          width: double.infinity,
+                                          height: 200,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleLarge
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              snippet,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.copyWith(height: 1.5),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       );
                     },
                     child: const Text(
@@ -158,7 +195,6 @@ class _NewsCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ],
             ),
           ),
@@ -191,4 +227,3 @@ class _CategoryTag extends StatelessWidget {
     );
   }
 }
-
