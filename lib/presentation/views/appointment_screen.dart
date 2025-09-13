@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../../core/services/schedule_services.dart';
 import '../../data/models/doctor.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../data/models/report.dart';
+import '../../data/models/schedule.dart' hide Doctor;
 
 
 class AppointmentScreen extends StatefulWidget {
@@ -20,15 +22,16 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  int? _selectedDateIndex;
+  DateTime? _selectedDate;
   String? _selectedTime;
+  DateTime _focusedDay = DateTime.now();
 
   final List<String> availableTimes = ['09.00', '11.00', '14.00', '16.00', '18.00', '20.00'];
 
   @override
   void initState() {
     super.initState();
-    _selectedDateIndex = DateTime.now().day;
+    _selectedDate = DateTime.now();
     _selectedTime = '11.00';
   }
 
@@ -141,14 +144,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 const SizedBox(height: 6),
-                Text(
-                  "Klinik: ${widget.clinicName}",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    fontStyle: FontStyle.italic,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.pin_drop_rounded, color: Colors.white70, size: 24),
+                    const SizedBox(width: 6),
+                    Text(
+                      widget.clinicName,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -162,7 +173,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TableCalendar(
-        focusedDay: DateTime.now(),
+        focusedDay: _focusedDay,
         firstDay: DateTime.utc(2020, 1, 1),
         lastDay: DateTime.utc(2030, 12, 31),
         calendarFormat: CalendarFormat.month,
@@ -172,12 +183,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           titleCentered: true,
         ),
         selectedDayPredicate: (day) {
-          return isSameDay(DateTime.utc(2025, 9, _selectedDateIndex ?? 11), day);
+          return isSameDay(_selectedDate, day);
         },
         onDaySelected: (selectedDay, focusedDay) {
           setState(() {
-            _selectedDateIndex = selectedDay.day;
+            _selectedDate = selectedDay;
+            _focusedDay = focusedDay;
           });
+        },
+        onPageChanged: (focusedDay) {
+          _focusedDay = focusedDay;
         },
       ),
     );
@@ -185,40 +200,69 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
 
   Widget _buildTimeSlots() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Wrap(
-        spacing: 12.0,
-        runSpacing: 12.0,
-        children: availableTimes.map((time) {
-          final isSelected = _selectedTime == time;
-          return GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedTime = time;
-              });
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-              decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF007BFF) : Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? const Color(0xFF007BFF) : Colors.grey.shade400,
+    return FutureBuilder<List<Schedule>>(
+      future: ScheduleServices().getSchedules(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Text("Error: ${snapshot.error}");
+        }
+
+        final schedules = snapshot.data ?? [];
+
+        final filtered = schedules.where((s) =>
+        s.doctorId == widget.doctor.id &&
+            _selectedDate != null &&
+            s.date.year == _selectedDate!.year &&
+            s.date.month == _selectedDate!.month &&
+            s.date.day == _selectedDate!.day
+        ).toList();
+
+        if (filtered.isEmpty) {
+          return const Text("Tidak ada jadwal tersedia");
+        }
+
+        final availableTimes = filtered.map((s) {
+          final start = "${s.startTime.hour.toString().padLeft(2, '0')}:${s.startTime.minute.toString().padLeft(2, '0')}";
+          final end = "${s.endTime.hour.toString().padLeft(2, '0')}:${s.endTime.minute.toString().padLeft(2, '0')}";
+          return "$start - $end";
+        }).toList();
+
+        return Wrap(
+          spacing: 12.0,
+          runSpacing: 12.0,
+          children: availableTimes.map((time) {
+            final isSelected = _selectedTime == time;
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedTime = time;
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xFF007BFF) : Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? const Color(0xFF007BFF) : Colors.grey.shade400,
+                  ),
+                ),
+                child: Text(
+                  time,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : const Color(0xFF007BFF),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              child: Text(
-                time,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF007BFF),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -235,16 +279,21 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           minimumSize: const Size(double.infinity, 50),
         ),
         onPressed: () {
-          if (_selectedDateIndex != null && _selectedTime != null) {
+          if (_selectedDate != null && _selectedTime != null) {
             final reportInfo = widget.report != null
                 ? " (Report ID: ${widget.report!.id})"
                 : "";
 
+            final formattedDate =
+                "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!
+                .year}";
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Janji temu dibuat dengan ${widget.doctor.name} di ${widget.clinicName}, '
-                      'tanggal $_selectedDateIndex jam $_selectedTime$reportInfo',
+                  'Janji temu dibuat dengan ${widget.doctor.name} di ${widget
+                      .clinicName}, '
+                      'tanggal $formattedDate jam $_selectedTime$reportInfo',
                 ),
               ),
             );
