@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import '../../data/models/doctor.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../data/models/report.dart';
+
 
 class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
+  final Report? report;
+  final String clinicName;
 
   const AppointmentScreen({
     super.key,
-    required this.doctor,
+    required this.doctor, this.report, required this.clinicName,
   });
 
   @override
@@ -24,7 +28,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedDateIndex = 11;
+    _selectedDateIndex = DateTime.now().day;
     _selectedTime = '11.00';
   }
 
@@ -106,10 +110,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             backgroundColor: Colors.white,
             child: CircleAvatar(
               radius: 42,
-              backgroundImage: doctor.profile_photo_url != null
-                  ? NetworkImage(doctor.profile_photo_url!)
+              backgroundImage: doctor.profilePhotoUrl != null
+                  ? NetworkImage(doctor.profilePhotoUrl!)
                   : null,
-              child: doctor.profile_photo_url == null
+              child: doctor.profilePhotoUrl == null
                   ? const Icon(Icons.person, size: 50, color: Colors.grey)
                   : null,
             ),
@@ -126,10 +130,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            child: Text(
-              specialties,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+            child: Column(
+              children: [
+                Text(
+                  specialties,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "Klinik: ${widget.clinicName}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 13,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -215,10 +236,15 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ),
         onPressed: () {
           if (_selectedDateIndex != null && _selectedTime != null) {
+            final reportInfo = widget.report != null
+                ? " (Report ID: ${widget.report!.id})"
+                : "";
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
-                  'Janji temu dibuat pada tanggal $_selectedDateIndex jam $_selectedTime',
+                  'Janji temu dibuat dengan ${widget.doctor.name} di ${widget.clinicName}, '
+                      'tanggal $_selectedDateIndex jam $_selectedTime$reportInfo',
                 ),
               ),
             );

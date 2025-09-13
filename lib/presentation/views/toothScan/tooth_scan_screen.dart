@@ -6,6 +6,7 @@ import 'package:toothy/presentation/views/toothScan/steps/camera_step.dart';
 import 'package:toothy/presentation/views/toothScan/steps/instruction_step.dart';
 import 'package:toothy/presentation/views/toothScan/steps/step_indicator.dart';
 import 'package:provider/provider.dart';
+import '../../../core/widgets/loading_screen.dart';
 import '../../viewmodels/tooth_scan_viewmodel.dart';
 import '../home/view/widgets/custom_button.dart';
 
@@ -60,9 +61,20 @@ class _ToothScanScreenState extends State<ToothScanScreen>
             body = _buildFinalPreviewStep(viewModel);
           }
 
-          return Scaffold(
-            backgroundColor: Colors.white,
-            body: body,
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: Colors.white,
+                body: body,
+              ),
+              if (viewModel.isUploading)
+                Container(
+                  color: Colors.black45,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  ),
+                ),
+            ],
           );
         },
       ),
@@ -82,65 +94,91 @@ class _ToothScanScreenState extends State<ToothScanScreen>
         ),
       ),
       child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 20),
-              Text(
-                viewModel.getCurrentTitle(),
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                  letterSpacing: 2,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final screenWidth = constraints.maxWidth;
+            final screenHeight = constraints.maxHeight;
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: screenHeight),
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20),
+                      Text(
+                        viewModel.getCurrentTitle(),
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.06,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade800,
+                          letterSpacing: 1.5,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        viewModel.getCurrentSubtitle(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      StepIndicatorWidget(currentStep: viewModel.currentStep),
+                      const SizedBox(height: 12),
+                      const InstructionCard(),
+                      const SizedBox(height: 20),
+                      Text(
+                        "Contoh Pengambilan Gambar yang Benar:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: screenWidth * 0.035,
+                          color: Colors.grey.shade700,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        alignment: WrapAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: screenWidth * 0.25,
+                            child: ExampleImageWidget(id: 1, label: "Posisi 1"),
+                          ),
+                          SizedBox(
+                            width: screenWidth * 0.25,
+                            child: ExampleImageWidget(id: 2, label: "Posisi 2"),
+                          ),
+                          SizedBox(
+                            width: screenWidth * 0.25,
+                            child: ExampleImageWidget(id: 3, label: "Posisi 3"),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20,),
+                      AnimatedStartButton(
+                        text: "MULAI SCAN",
+                        scaleAnimation: _scaleAnimation,
+                        onPressed: () {
+                          _animationController.forward().then((_) {
+                            _animationController.reverse();
+                            viewModel.startScan();
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 30),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                viewModel.getCurrentSubtitle(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-              StepIndicatorWidget(currentStep: viewModel.currentStep),
-              const InstructionCard(),
-              const SizedBox(height: 20),
-              Text(
-                "Contoh Pengambilan Gambar yang Benar:",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
-                ),
-              ),
-              const SizedBox(height: 12),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ExampleImageWidget(emoji: "🦷", label: "Posisi 1"),
-                  ExampleImageWidget(emoji: "🦷", label: "Posisi 2"),
-                  ExampleImageWidget(emoji: "🦷", label: "Posisi 3"),
-                ],
-              ),
-              const Spacer(),
-              AnimatedStartButton(
-                text: "MULAI SCAN",
-                scaleAnimation: _scaleAnimation,
-                onPressed: () {
-                  _animationController.forward().then((_) {
-                    _animationController.reverse();
-                    viewModel.startScan();
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -352,7 +390,6 @@ class _ToothScanScreenState extends State<ToothScanScreen>
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            height: 120,
                             width: double.infinity,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12),
@@ -415,33 +452,63 @@ class _ToothScanScreenState extends State<ToothScanScreen>
                       margin: const EdgeInsets.only(left: 8),
                       child: GradientButton(
                         text: "Kirim & Analisis",
-                        isLoading: viewModel.isUploading,
-                          onPressed: () async {
-                            final images = viewModel.capturedImages
-                                .map((xfile) => xfile.path)
-                                .where((path) => path.isNotEmpty)
-                                .toList();
+                        onPressed: viewModel.isUploading ? null : () async {
+                          final images = viewModel.capturedImages
+                              .map((xfile) => xfile.path)
+                              .where((path) => path.isNotEmpty)
+                              .toList();
 
-                            final report = await context
-                                .read<ToothScanViewModel>()
-                                .sendPicture(images);
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (context) => const LoadingScreen(),
+                          );
+
+                          try {
+                            final report = await context.read<ToothScanViewModel>().sendPicture(images);
+
+                            if (context.mounted) {
+                              Navigator.pop(context);
+                            }
 
                             if (report != null && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Foto berhasil dikirim & dianalisis"),
+                                  backgroundColor: Colors.green,
+                                ),
+                              );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => ScanResultScreen(),
+                                  builder: (_) => const ScanResultScreen(),
                                 ),
                               );
                             } else {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Gagal mengirim foto"),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          } catch (e) {
+                            if (context.mounted) {
+                              Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Gagal mengirim foto")),
+                                const SnackBar(
+                                  content: Text("Terjadi kesalahan saat mengirim foto"),
+                                  backgroundColor: Colors.red,
+                                ),
                               );
                             }
                           }
-                      ),
+                        },
+                      )
                     ),
-                  ),
+                  )
                 ],
               ),
             ],

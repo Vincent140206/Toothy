@@ -1,36 +1,62 @@
+
+import 'package:toothy/data/models/clinic.dart';
 import 'package:toothy/data/models/specialist.dart';
 
 class Doctor {
-  final profile_photo_url;
-  final name;
-  final years_experience;
-  final created_at;
-  final updated_at;
-  final id;
-  final List<Specialists> specialists;
+  final String id;
+  final String profilePhotoUrl;
+  final String name;
+  final int yearsExperience;
+  final String createdAt;
+  final String updatedAt;
+  final List<Specialist> specialists;
+  final Clinic? clinic;
 
   Doctor({
     required this.id,
-    required this.profile_photo_url,
+    required this.profilePhotoUrl,
     required this.name,
-    required this.years_experience,
-    required this.created_at,
-    required this.updated_at,
-    required this.specialists
+    required this.yearsExperience,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.specialists,
+    this.clinic,
   });
 
-  factory Doctor.fromJson(Map<String, dynamic> json) {
-    final specialistsJson = json['specialists'] as List<dynamic>? ?? [];
-    final specialists = specialistsJson.map((s) => Specialists.fromJson(s)).toList();
-
+  factory Doctor.fromJson(Map<String, dynamic> json, {Clinic? clinicData}) {
     return Doctor(
-      id: json['id'],
-      profile_photo_url: json['profile_photo_url'],
-      name: json['name'],
-      years_experience: json['years_experience'],
-      created_at: json['created_at'],
-      updated_at: json['updated_at'],
-      specialists: specialists
+      id: json['id']?.toString() ?? '',
+      profilePhotoUrl: json['profile_photo_url']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      yearsExperience: _parseInt(json['years_experience']),
+      createdAt: json['created_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
+      clinic: clinicData,
+      specialists: (json['specialists'] is List)
+          ? (json['specialists'] as List)
+          .map((s) => Specialist.fromJson(s as Map<String, dynamic>))
+          .toList()
+          : [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'profile_photo_url': profilePhotoUrl,
+      'name': name,
+      'years_experience': yearsExperience,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      'specialists': specialists.map((s) => s.toJson()).toList(),
+      'clinic': clinic?.toJson(),
+
+    };
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is int) return value;
+    return int.tryParse(value.toString()) ?? 0;
   }
 }

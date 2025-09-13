@@ -1,16 +1,27 @@
-class Specialists {
-  final int id;
+class Specialist {
+  final String id;
   final String title;
+  final String? description;
 
-  Specialists({
+  Specialist({
     required this.id,
     required this.title,
+    this.description,
   });
 
-  factory Specialists.fromJson(Map<String, dynamic> json) {
-    return Specialists(
-      id: json['id'],
-      title: json['title'],
+  factory Specialist.fromJson(Map<String, dynamic> json) {
+    return Specialist(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'description': description,
+    };
   }
 }

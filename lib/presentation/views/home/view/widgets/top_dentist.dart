@@ -30,17 +30,18 @@ class _TopDentist extends StatelessWidget {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12.0),
               child: TopDentistCard(
-                picture: doctor.profile_photo_url ?? "",
+                picture: doctor.profilePhotoUrl ?? "",
                 name: doctor.name,
                 specialist: doctor.specialists.isNotEmpty
-                    ? doctor.specialists.map((s) => s.title).join(", ")
+                    ? doctor.specialists.map((s) => s?.title).join(", ")
                     : "Dokter Gigi Umum",
-                experiences: doctor.years_experience.toString(),
-                onTap: () {
+                experiences: doctor.yearsExperience.toString(),
+                onTap: () async {
+                  final clinic = await doctorService.getSpecificDoctors(doctor.id);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(doctor: doctor),
+                      builder: (_) => AppointmentScreen(doctor: doctor, clinicName: clinic?.name ?? "Klinik tidak diketahui",),
                     ),
                   );
                 },
@@ -65,6 +66,7 @@ class TopDentistCard extends StatelessWidget {
     required this.name,
     required this.specialist,
     required this.experiences,
+
     this.onTap,
   });
 

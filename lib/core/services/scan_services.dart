@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -95,27 +96,32 @@ class ScanServices {
       ]);
 
       formData.fields.add(
-        MapEntry("additional_description", "Uploaded from Flutter"),
+        const MapEntry("additional_description", "Dikirim pincen"),
       );
-
-      print("➡️ Fields: ${formData.fields}");
-      print("➡️ Files: ${formData.files.map((f) => f.key).toList()}");
 
       final response = await dioClient.dio.post(
         Urls.createReports,
         data: formData,
       );
+      print("Status: ${response.statusCode}");
+      print("Data: ${response.data}");
 
-      print("📡 Status: ${response.statusCode}");
-      print("📡 Data: ${response.data}");
-
-      if (response.statusCode == 200 && response.data['status'] == 'success') {
+      if (response.statusCode == 201 && response.data['status'] == 'success') {
         return Report.fromJson(response.data['data']);
       }
-      return null;
+
+      if (response.data != null && response.data['data'] != null) {
+        return Report.fromJson(
+            response.data['data'],
+        );
+      }
+
+      return Report.fromJson(response.data['data']
+      );
     } catch (e) {
-      print("❌ Error sending to API: $e");
-      return null;
+      print("Error sending to API: $e");
+      return Report(id: '', status: 'error', userId: '', summary: '', createdAt: DateTime.now(), updatedAt: DateTime.now(), message: 'Error, Coba foto ulang', recommendations: []
+      );
     }
   }
 

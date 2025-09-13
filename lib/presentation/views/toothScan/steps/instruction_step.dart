@@ -53,12 +53,12 @@ class InstructionItem extends StatelessWidget {
 }
 
 class ExampleImageWidget extends StatelessWidget {
-  final String emoji;
+  final int id;
   final String label;
 
-  const ExampleImageWidget({
+  ExampleImageWidget({
     super.key,
-    required this.emoji,
+    required this.id,
     required this.label,
   });
 
@@ -74,10 +74,11 @@ class ExampleImageWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: Colors.grey.shade300),
           ),
-          child: Center(
-            child: Text(
-              emoji,
-              style: const TextStyle(fontSize: 32),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              "assets/images/Example$id.png",
+              fit: BoxFit.cover,
             ),
           ),
         ),

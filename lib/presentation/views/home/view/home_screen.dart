@@ -14,6 +14,7 @@ import '../../../../data/models/article.dart';
 import '../../../../data/models/clinic.dart';
 import '../../../../data/models/user.dart';
 import '../../appointment_screen.dart';
+import '../../clinic_doctor_list_page.dart';
 part 'widgets/home_app_bar.dart';
 part 'widgets/appointment_banner.dart';
 part 'widgets/top_dentist.dart';
@@ -124,48 +125,6 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 20),
                 const _NewsSection(),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    await TokenStorage.clearAll();
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
-                  child: const Text('Logout'),
-                ),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    await ClinicViewModel().getClinics();
-                  },
-                  child: const Text('get clinic'),
-                ),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    await ClinicViewModel().getSpecificClinics('1');
-                  },
-                  child: const Text('get specific clinic'),
-                ),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    await DoctorViewModel().getAllDoctors();
-                  },
-                  child: const Text('get all doctor'),
-                ),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    await DoctorViewModel().getSpecificDoctors();
-                  },
-                  child: const Text('get Specific doctor'),
-                ),
-
-                ElevatedButton(
-                  onPressed: () async {
-                    Navigator.pushNamed(context, '/maps');
-                  },
-                  child: const Text('maps'),
-                ),
               ],
             ),
           ),

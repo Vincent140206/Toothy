@@ -43,12 +43,12 @@ class _ClinicList extends StatelessWidget {
                 close_time: clinics.close_time,
                 id: clinics.id,
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (_) => AppointmentScreen(doctor: doctor),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ClinicDoctorListPage(clinicId: clinics.id),
+                    ),
+                  );
                 },
               ),
             );

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../data/models/clinic.dart';
 import '../../data/models/doctor.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
@@ -23,9 +24,9 @@ class DoctorServices {
     }
   }
 
-  Future<void> getSpecificDoctors() async {
+  Future<Clinic?> getSpecificDoctors(String id) async {
     try {
-      final response = await dioClient.dio.get(Urls.getDoctors);
+      final response = await dioClient.dio.get('Urls.getDoctors$id');
 
       if (response.statusCode == 200) {
         final data = response.data['data'];

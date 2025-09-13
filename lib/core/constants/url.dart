@@ -6,6 +6,7 @@ class Urls {
   static const String checkSession = '$baseUrl/api/auth/session';
   // Clinics
   static const String getClinics = '$baseUrl/api/clinics';
+  static const String getClinicsDoctors = '$baseUrl/api/clinics/doctors';
   static const String getSpecificClinics = '$baseUrl/api/clinics/';
   // Doctors
   static const String getDoctors = '$baseUrl/api/doctors';

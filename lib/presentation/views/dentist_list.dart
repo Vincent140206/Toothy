@@ -99,20 +99,20 @@ class _DentistListViewState extends State<DentistListView> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: TopDentistCard(
-                            picture: doctor.profile_photo_url ?? "",
+                            picture: doctor.profilePhotoUrl ?? "",
                             name: doctor.name,
                             specialist: doctor.specialists.isNotEmpty
                                 ? doctor.specialists
-                                .map((s) => s.title)
+                                .map((s) => s?.title)
                                 .join(", ")
                                 : "Dokter Gigi Umum",
-                            experiences: doctor.years_experience.toString(),
+                            experiences: doctor.yearsExperience.toString(),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AppointmentScreen(doctor: doctor),
+                                      AppointmentScreen(doctor: doctor, clinicName: doctor.clinic?.name ?? "Klinik tidak diketahui",),
                                 ),
                               );
                             },

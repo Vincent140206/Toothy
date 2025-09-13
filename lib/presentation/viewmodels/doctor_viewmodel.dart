@@ -14,9 +14,9 @@ class DoctorViewModel {
     }
   }
 
-  Future<bool> getSpecificDoctors() async {
+  Future<bool> getSpecificDoctors(String id) async {
     try {
-      await doctorServices.getSpecificDoctors();
+      await doctorServices.getSpecificDoctors(id);
       return true;
     } catch (e) {
       errorMessage = 'Terjadi kesalahan: $e';

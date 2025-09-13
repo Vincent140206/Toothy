@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toothy/presentation/views/clinic_doctor_list_page.dart';
 
 class ClinicListCard extends StatelessWidget {
   final String id;
@@ -7,7 +8,6 @@ class ClinicListCard extends StatelessWidget {
   final String address;
   final String open_time;
   final String close_time;
-  final VoidCallback? onTap;
 
   const ClinicListCard({
     required this.id,
@@ -15,8 +15,7 @@ class ClinicListCard extends StatelessWidget {
     required this.photo_url,
     required this.address,
     required this.open_time,
-    required this.close_time,
-    this.onTap,
+    required this.close_time, required Null Function() onTap,
   });
 
   @override
@@ -31,7 +30,9 @@ class ClinicListCard extends StatelessWidget {
         .height;
 
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ClinicDoctorListPage(clinicId: id,)));
+      },
       child: Container(
         padding: EdgeInsets.all(screenWidth * 0.03),
         decoration: BoxDecoration(

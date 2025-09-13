@@ -19,7 +19,7 @@ class StorageCommon {
     return decoded.map((e) => Clinic.fromJson(e)).toList();
   }
 
-  static Future<void> clearClinic() async {
+  static Future<void> clearClinics() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('clinic');
   }

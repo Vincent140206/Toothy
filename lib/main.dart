@@ -5,12 +5,15 @@ import 'package:toothy/presentation/viewmodels/tooth_scan_viewmodel.dart';
 import 'package:toothy/presentation/views/auth/view/login_screen.dart';
 import 'package:toothy/presentation/views/auth/view/register_screen.dart';
 import 'package:toothy/presentation/views/clinic_all.dart';
+import 'package:toothy/presentation/views/clinic_selection.dart';
 import 'package:toothy/presentation/views/dentist_list.dart';
 import 'package:toothy/presentation/views/home/view/home_screen.dart';
 import 'package:toothy/presentation/views/home/view/main_screen.dart';
 import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/onboarding/view/onboarding_view.dart';
 import 'package:toothy/presentation/views/splashscreen/splashscreen_view.dart';
+
+import 'data/models/report.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -52,6 +55,10 @@ class MyApp extends StatelessWidget {
         '/dentist-list': (context) => const DentistListView(),
         '/clinic-list': (context) => const ClinicAllView(),
         '/maps': (context) => const ClinicMapView(),
+        '/clinic-selection': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Report?;
+          return ClinicSelectionPage(report: args);
+        }
       },
     );
   }

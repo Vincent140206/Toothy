@@ -6,7 +6,6 @@ import '../../data/models/report.dart';
 class ToothScanViewModel extends ChangeNotifier {
   CameraController? _controller;
   Future<void>? _initializeControllerFuture;
-  bool get isUploading => _isUploading;
   List<Report> reports = [];
   bool isLoading = false;
   String? errorMessage;
@@ -18,7 +17,7 @@ class ToothScanViewModel extends ChangeNotifier {
   List<XFile> _capturedImages = [];
   bool _isFlashOn = false;
   int _currentPhotoIndex = 0;
-  bool _isUploading = false;
+  bool isUploading = false;
 
   CameraController? get controller => _controller;
   Future<void>? get initializeControllerFuture => _initializeControllerFuture;
@@ -40,8 +39,10 @@ class ToothScanViewModel extends ChangeNotifier {
   }) async {
     final newController = await ScanServices.setupCamera(direction: direction);
     if (newController != null) {
+      await _controller?.dispose();
+
       _controller = newController;
-      _initializeControllerFuture = Future.value();
+      _initializeControllerFuture = _controller!.initialize();
       notifyListeners();
     }
   }
@@ -72,7 +73,40 @@ class ToothScanViewModel extends ChangeNotifier {
 
   void goToFinalPreview() {
     _currentStep = 4;
+    _disposeCamera();
     notifyListeners();
+  }
+
+  Future<void> disposeCamera() async {
+    await _disposeCamera();
+  }
+
+  Future<void> _disposeCamera() async {
+    try {
+      if (_controller != null) {
+        await _controller!.dispose();
+        _controller = null;
+        _initializeControllerFuture = null;
+        print("Camera disposed successfully");
+      }
+    } catch (e) {
+      print("Error disposing camera: $e");
+    }
+  }
+
+  void goToPhotoCapture(int index) {
+    _currentPhotoIndex = index;
+    _currentStep = 2;
+
+    if (_controller == null) {
+      _setupCamera();
+    }
+
+    notifyListeners();
+  }
+  Future<void> restartCamera({CameraLensDirection direction = CameraLensDirection.front}) async {
+    await _disposeCamera();
+    await _setupCamera(direction: direction);
   }
 
   Future<void> takePicture() async {
@@ -106,30 +140,25 @@ class ToothScanViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void goToPhotoCapture(int index) {
-    _currentPhotoIndex = index;
-    _currentStep = 2;
-    notifyListeners();
-  }
-
   void resetAll() {
+    _disposeCamera();
+
     _currentStep = 1;
     _currentPhotoIndex = 0;
     _capturedImages = List.filled(3, XFile(''), growable: false);
     notifyListeners();
   }
 
-  Future<Report?> sendPicture(List<String> images) async {
-    _isUploading = true;
-    notifyListeners();
 
+  Future<Report?> sendPicture(List<String> images) async {
     try {
       final result = await ScanServices.sendPictures(images);
       _report = result;
-      return result;
-    } finally {
-      _isUploading = false;
       notifyListeners();
+      return result;
+    } catch (e) {
+      debugPrint("Upload gagal: $e");
+      return null;
     }
   }
 
@@ -163,7 +192,7 @@ class ToothScanViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    _controller?.dispose();
+    _disposeCamera();
     super.dispose();
   }
 }

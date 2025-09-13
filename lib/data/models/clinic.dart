@@ -1,3 +1,5 @@
+import 'doctor.dart';
+
 class Clinic {
   final String id;
   final String name;
@@ -9,6 +11,7 @@ class Clinic {
   final String close_time;
   final String created_at;
   final String updated_at;
+  final List<Doctor> doctors;
 
   Clinic({
     required this.id,
@@ -21,6 +24,7 @@ class Clinic {
     required this.close_time,
     required this.created_at,
     required this.updated_at,
+    required this.doctors
   });
 
   factory Clinic.fromJson(Map<String, dynamic> json) {
@@ -28,15 +32,13 @@ class Clinic {
       if (value == null) return '';
       final str = value.toString();
 
-      // case: format ISO
       if (str.contains('T')) {
         try {
-          final dt = DateTime.parse(str);
+          final dt = DateTime.parse(str).toLocal();
           return "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
         } catch (_) {}
       }
 
-      // case: format HH:mm:ss
       if (str.contains(':')) {
         final parts = str.split(':');
         if (parts.length >= 2) {
@@ -44,7 +46,6 @@ class Clinic {
         }
       }
 
-      // case: format pakai titik (15.00)
       if (str.contains('.')) {
         final parts = str.split('.');
         final hour = parts[0].padLeft(2, '0');
@@ -52,7 +53,7 @@ class Clinic {
         return "$hour:$minute";
       }
 
-      return str; // fallback biar ga error
+      return str;
     }
 
     return Clinic(
@@ -66,6 +67,11 @@ class Clinic {
       close_time: formatTime(json['close_time']),
       created_at: json['created_at']?.toString() ?? '',
       updated_at: json['updated_at']?.toString() ?? '',
+      doctors: (json['doctors'] != null && json['doctors'] is List)
+          ? (json['doctors'] as List)
+          .map((d) => Doctor.fromJson(d as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
 
@@ -81,6 +87,9 @@ class Clinic {
       'close_time': close_time,
       'created_at': created_at,
       'updated_at': updated_at,
+      'doctors': doctors.isNotEmpty
+          ? doctors.map((d) => d.toJson()).toList()
+          : [],
     };
   }
 }

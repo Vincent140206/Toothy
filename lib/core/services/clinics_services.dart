@@ -28,6 +28,29 @@ class ClinicsServices {
     }
   }
 
+  Future<Clinic> getClinicDoctor(String clinicId) async {
+    try {
+      final response = await dioClient.dio.get("${Urls.baseUrl}/api/clinics/$clinicId/doctors");
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        final clinic = Clinic.fromJson(data);
+
+        print('Fetched clinic: ${clinic.name}');
+        print('Doctors count: ${clinic.doctors.length}');
+        clinic.doctors.forEach((d) => print(d.name));
+
+        return clinic;
+      } else {
+        throw Exception('Failed to fetch clinic doctors');
+      }
+    } catch (e, stacktrace) {
+      print("Error getClinicDoctor: $e");
+      print(stacktrace);
+      throw Exception('Failed to fetch clinic doctors: $e');
+    }
+  }
+
   Future<void> getSpecificClinic(String id) async {
     try {
       final response = await dioClient.dio.get('${Urls.getClinics}/$id');
