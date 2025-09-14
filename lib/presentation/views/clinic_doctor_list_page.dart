@@ -250,6 +250,7 @@ class _ClinicDoctorListPageState extends State<ClinicDoctorListPage> {
           doctor: doctor,
           report: widget.report,
           clinicName: clinic?.name ?? "Klinik Tidak Diketahui",
+          scheduleId: "",
         ),
       ),
     );

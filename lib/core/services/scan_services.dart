@@ -120,7 +120,7 @@ class ScanServices {
       );
     } catch (e) {
       print("Error sending to API: $e");
-      return Report(id: '', status: 'error', userId: '', summary: '', createdAt: DateTime.now(), updatedAt: DateTime.now(), message: 'Error, Coba foto ulang', recommendations: []
+      return Report(id: '', status: 'error', userId: '', summary: '', createdAt: DateTime.now(), updatedAt: DateTime.now(), message: 'Error, Coba foto ulang', recommendations: [], frontTeethPhotoUrl: '', upperTeethPhotoUrl: '', lowerTeethPhotoUrl: ''
       );
     }
   }
@@ -159,4 +159,18 @@ class ScanServices {
     }
   }
 
+  static Future<Report?> getSpecificReport(String reportId) async {
+    try {
+      final response = await dioClient.dio.get('${Urls.getSpecificReports}/$reportId',);
+
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final data = response.data['data'];
+        return Report.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      debugPrint("Error getSpecificReport: $e");
+      return null;
+    }
+  }
 }

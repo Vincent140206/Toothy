@@ -8,16 +8,20 @@ import '../../data/models/report.dart';
 import '../../data/models/schedule.dart' hide Doctor;
 import '../viewmodels/appointment_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
   final Report? report;
   final String clinicName;
-  final String? scheduleId;
+  final String scheduleId;
 
   const AppointmentScreen({
     super.key,
-    required this.doctor, this.report, required this.clinicName, this.scheduleId,
+    required this.doctor,
+    this.report,
+    required this.clinicName,
+    required this.scheduleId,
   });
 
   @override
@@ -28,21 +32,63 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime? _selectedDate;
   String? _selectedTime;
   DateTime _focusedDay = DateTime.now();
-  MidTransService midTransService = MidTransService();
-  final midtrans = MidTransService();
+
+  // Hanya gunakan satu instance MidTransService
+  final MidTransService _midTransService = MidTransService();
+  Schedule? _selectedSchedule;
+  bool _isMidtransReady = false;
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
+
+    // Initialize Midtrans setelah widget selesai di-build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeMidtrans();
+    });
+  }
+
+  Future<void> _initializeMidtrans() async {
+    try {
+      // Wait longer and try multiple times
+      await _midTransService.initMidtrans(retryCount: 5);
+      if (mounted) {
+        setState(() {
+          _isMidtransReady = true;
+        });
+        debugPrint("Midtrans initialized successfully");
+      }
+    } catch (e) {
+      debugPrint("Failed to initialize Midtrans after all retries: $e");
+      if (mounted) {
+        // Tampilkan error ke user dengan opsi manual retry
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Payment system failed to initialize"),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 5),
+            action: SnackBarAction(
+              label: "Retry",
+              textColor: Colors.white,
+              onPressed: () {
+                // Reset state before retry
+                setState(() {
+                  _isMidtransReady = false;
+                });
+                _initializeMidtrans();
+              },
+            ),
+          ),
+        );
+      }
+    }
   }
 
   Future<List<Schedule>> _loadSchedules() async {
     final service = ScheduleServices();
-    if (widget.scheduleId != null && widget.scheduleId!.isNotEmpty) {
-      final schedule = await ScheduleServices().getSpecificSchedule(
-        id: widget.scheduleId!,
-      );
+    if (widget.scheduleId.isNotEmpty) {
+      final schedule = await service.getSpecificSchedule(id: widget.scheduleId);
       return [schedule];
     } else {
       return await service.getSchedules();
@@ -243,42 +289,56 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         }
 
         final availableTimes = filtered.map((s) {
-          final start = "${s.startTime.hour.toString().padLeft(2, '0')}:${s
-              .startTime.minute
-              .toString()
-              .padLeft(2, '0')}";
-          final end = "${s.endTime.hour.toString().padLeft(2, '0')}:${s.endTime
-              .minute.toString().padLeft(2, '0')}";
-          return "$start - $end";
+          final start = "${s.startTime.hour.toString().padLeft(2, '0')}:${s.startTime.minute.toString().padLeft(2, '0')}";
+          final end = "${s.endTime.hour.toString().padLeft(2, '0')}:${s.endTime.minute.toString().padLeft(2, '0')}";
+          return {
+            "time": "$start - $end",
+            "schedule": s,
+          };
         }).toList();
 
         return Wrap(
           spacing: 12.0,
           runSpacing: 12.0,
-          children: availableTimes.map((time) {
-            final isSelected = _selectedTime == time;
+          children: availableTimes.map((item) {
+            final time = item["time"] as String;
+            final schedule = item["schedule"] as Schedule;
+            final isAvailable = schedule.status == "AVAILABLE";
+            final isSelected = _selectedSchedule?.id == schedule.id;
+
             return GestureDetector(
-              onTap: () {
+              onTap: isAvailable
+                  ? () {
                 setState(() {
                   _selectedTime = time;
+                  _selectedSchedule = schedule;
                 });
-              },
+              }
+                  : null,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 8, horizontal: 14),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFF007BFF) : Colors.white,
+                  color: isSelected
+                      ? const Color(0xFF007BFF)
+                      : isAvailable
+                      ? Colors.white
+                      : Colors.grey.shade300,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? const Color(0xFF007BFF) : Colors.grey
-                        .shade400,
+                    color: isSelected
+                        ? const Color(0xFF007BFF)
+                        : isAvailable
+                        ? Colors.grey.shade400
+                        : Colors.grey.shade600,
                   ),
                 ),
                 child: Text(
                   time,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : const Color(0xFF007BFF),
+                    color: isAvailable
+                        ? (isSelected ? Colors.white : const Color(0xFF007BFF))
+                        : Colors.grey,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -304,29 +364,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               ),
               minimumSize: const Size(double.infinity, 50),
             ),
-            onPressed: vm.isLoading ? null : () async {
-              final prefs = await SharedPreferences.getInstance();
-              final userId = prefs.getString("user_id");
-
-              if (_selectedDate == null || _selectedTime == null) return;
-
-              await context.read<AppointmentViewModel>().createAppointment(
-                userId: userId,
-                scheduleId: widget.scheduleId ?? "",
-                additionalDescription: widget.report != null
-                    ? "Report ID: ${widget.report!.id}"
-                    : null,
-              );
-
-              if (!mounted) return;
-
-              if (vm.errorMessage != null) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text("Error: ${vm.errorMessage}")));
-              } else if (vm.appointments != null) {
+            onPressed: (vm.isLoading || !_isMidtransReady) ? null : () async {
+              if (_selectedSchedule == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Appointment berhasil dibuat!")),
+                  const SnackBar(content: Text("Pilih jadwal dulu")),
                 );
+                return;
+              }
+
+              try {
+                final appointment = await context.read<AppointmentViewModel>().createAppointment(
+                  schedule_id: _selectedSchedule!.id,
+                  report_id: widget.report?.id,
+                );
+
+                if (!mounted) return;
+
+                if (appointment == null) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("Error: ${vm.errorMessage}")));
+                } else {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text("Appointment Berhasil Dibuat")));
+
+                  final snapToken = appointment.transaction?.snapToken;
+                  if (snapToken != null) {
+                    await _midTransService.pay(snapToken);
+                  }
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Error: $e")),
+                  );
+                }
               }
             },
             child: vm.isLoading
@@ -335,7 +406,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               height: 20,
               child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
             )
-                : const Text('Buat Janji Temu', style: TextStyle(fontSize: 18, color: Colors.white)),
+                : Text(
+                !_isMidtransReady
+                    ? 'Initializing Payment...'
+                    : 'Buat Janji Temu & Bayar',
+                style: TextStyle(fontSize: 18, color: Colors.white)
+            ),
           );
         },
       ),

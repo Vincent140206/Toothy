@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:toothy/core/utils/token_storage.dart';
+import 'package:toothy/data/models/appointment.dart';
 import 'package:toothy/data/models/doctor.dart';
 import 'package:toothy/presentation/viewmodels/clinic_viewmodel.dart';
 import 'package:toothy/presentation/viewmodels/doctor_viewmodel.dart';
@@ -14,6 +16,8 @@ import '../../../../core/utils/user_storage.dart';
 import '../../../../data/models/article.dart';
 import '../../../../data/models/clinic.dart';
 import '../../../../data/models/user.dart';
+import 'package:intl/intl.dart';
+import '../../../viewmodels/appointment_viewmodel.dart';
 import '../../appointment_screen.dart';
 import '../../clinic_doctor_list_page.dart';
 part 'widgets/home_app_bar.dart';
@@ -21,6 +25,7 @@ part 'widgets/appointment_banner.dart';
 part 'widgets/top_dentist.dart';
 part 'widgets/news_section.dart';
 part 'widgets/clinic_list.dart';
+
 
 class HomeScreen extends StatelessWidget {
   final TokenStorage tokenStorage = TokenStorage();
@@ -40,6 +45,35 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const _HomeAppBar(),
+                Row(
+                  children: [
+                    Text(
+                      'Appointment',
+                      style: Theme
+                          .of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/appointment');
+                        context.read<AppointmentViewModel>().fetchAppointments();
+                      }, child: Text(
+                        'Lihat Semua',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.w500,
+                        ),
+                    ),
+                    ),
+                  ]
+                ),
+                SizedBox(height: 10,),
                 const _AppointmentBanner(),
                 const SizedBox(height: 30),
                 Row(

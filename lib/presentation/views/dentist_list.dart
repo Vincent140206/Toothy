@@ -112,7 +112,7 @@ class _DentistListViewState extends State<DentistListView> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      AppointmentScreen(doctor: doctor, clinicName: doctor.clinic?.name ?? "Klinik tidak diketahui",),
+                                      AppointmentScreen(doctor: doctor, clinicName: doctor.clinic?.name ?? "Klinik tidak diketahui", scheduleId: doctor.scheduleId ?? ''),
                                 ),
                               );
                             },

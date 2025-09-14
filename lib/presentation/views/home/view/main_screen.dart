@@ -36,8 +36,8 @@ class _MainScreenState extends State<MainScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final fabSize = screenWidth * 0.23;
-    final fabIconSize = screenWidth * 0.1;
+    final fabSize = screenWidth * 0.2;
+    final fabIconSize = screenWidth * 0.08;
     final fabOffset = screenHeight * 0.012;
 
     return Scaffold(
@@ -61,10 +61,12 @@ class _MainScreenState extends State<MainScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SvgPicture.asset(
-                  'assets/icons/Scan.svg',
+                  'assets/icons/Scan2.svg',
+                  color: Color(0xFF0057B2),
                   width: fabIconSize,
                 ),
-                Text("TOOTH SCAN", style: TextStyle(color: Colors.black, fontSize: 12),)
+                SizedBox(height: 6,),
+                Text("SCAN", style: TextStyle(color: Colors.black, fontSize: 10),)
               ],
             ),
           ),

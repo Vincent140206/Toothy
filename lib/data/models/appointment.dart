@@ -1,13 +1,14 @@
 import 'package:toothy/data/models/schedule.dart';
 import 'package:toothy/data/models/transaction.dart';
 import 'package:toothy/data/models/user.dart';
+import 'package:intl/intl.dart';
 
 class Appointment {
   final String id;
   final String userId;
   final String scheduleId;
   final String? reportId;
-  final String transactionId;
+  final String? transactionId;
   final String? additionalDescription;
   final String status;
   final DateTime createdAt;
@@ -21,7 +22,7 @@ class Appointment {
     required this.userId,
     required this.scheduleId,
     this.reportId,
-    required this.transactionId,
+    this.transactionId,
     this.additionalDescription,
     required this.status,
     required this.createdAt,
@@ -46,8 +47,7 @@ class Appointment {
           ? Transaction.fromJson(json['transaction'])
           : null,
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      schedule:
-      json['schedule'] != null ? Schedule.fromJson(json['schedule']) : null,
+      schedule: json['schedule'] != null ? Schedule.fromJson(json['schedule']) : null,
     );
   }
 
@@ -88,5 +88,21 @@ AppointmentStatus parseStatus(String status) {
       return AppointmentStatus.completed;
     default:
       throw Exception("Unknown appointment status: $status");
+  }
+}
+
+extension AppointmentExtension on Appointment {
+  DateTime? get date {
+    return schedule?.startTime;
+  }
+
+  String get doctorName {
+    return schedule?.doctor?.name ?? "Unknown Doctor";
+  }
+
+  String get dateFormatted {
+    final d = date;
+    if (d == null) return "-";
+    return DateFormat("dd MMM yyyy, HH:MM", "id_ID").format(d);
   }
 }

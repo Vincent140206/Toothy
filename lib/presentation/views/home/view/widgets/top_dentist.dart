@@ -51,7 +51,7 @@ class _TopDentist extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (_) => AppointmentScreen(
                             doctor: doctor,
-                            clinicName: clinicName ?? 'Data Tidak Ada',
+                            clinicName: clinicName ?? 'Data Tidak Ada', scheduleId: doctor.scheduleId ?? '',
                           ),
                         ),
                       );

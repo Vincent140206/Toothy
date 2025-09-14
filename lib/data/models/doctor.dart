@@ -1,5 +1,6 @@
 
 import 'package:toothy/data/models/clinic.dart';
+import 'package:toothy/data/models/schedule.dart';
 import 'package:toothy/data/models/specialist.dart';
 
 class Doctor {
@@ -11,6 +12,8 @@ class Doctor {
   final String updatedAt;
   final List<Specialist> specialists;
   final Clinic? clinic;
+  final String? scheduleId;
+  final List<Schedule> schedules;
 
   Doctor({
     required this.id,
@@ -20,6 +23,8 @@ class Doctor {
     required this.createdAt,
     required this.updatedAt,
     required this.specialists,
+    required this.schedules,
+    this.scheduleId,
     this.clinic,
   });
 
@@ -37,6 +42,12 @@ class Doctor {
           .map((s) => Specialist.fromJson(s as Map<String, dynamic>))
           .toList()
           : [],
+      scheduleId: json['schedule_id']?.toString(),
+      schedules: (json['schedules'] is List)
+          ? (json['schedules'] as List)
+          .map((s) => Schedule.fromJson(s as Map<String, dynamic>))
+          .toList()
+          : [],
     );
   }
 
@@ -50,7 +61,8 @@ class Doctor {
       'updated_at': updatedAt,
       'specialists': specialists.map((s) => s.toJson()).toList(),
       'clinic': clinic?.toJson(),
-
+      'schedules': schedules.map((s) => s.toJson()).toList(),
+      'schedule_id': scheduleId,
     };
   }
 

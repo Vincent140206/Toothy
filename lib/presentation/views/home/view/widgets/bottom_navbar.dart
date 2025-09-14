@@ -31,7 +31,7 @@ class BottomNavBar extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildNavItem(
                 icon: selectedIndex == 0 ? Icons.home : Icons.home_outlined,
@@ -47,7 +47,7 @@ class BottomNavBar extends StatelessWidget {
                 isSelected: selectedIndex == 1,
                 onTap: () => onItemTapped(1),
               ),
-              const SizedBox(width: 40),
+              const SizedBox(width: 30),
               _buildNavItem(
                 icon: selectedIndex == 3 ? Icons.history : Icons.history_outlined,
                 label: 'Riwayat',
@@ -76,7 +76,7 @@ class BottomNavBar extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+        padding: const EdgeInsets.only(left: 12, right: 12, bottom: 10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -85,7 +85,6 @@ class BottomNavBar extends StatelessWidget {
               color: Colors.white,
               size: 24,
             ),
-            const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
@@ -94,10 +93,9 @@ class BottomNavBar extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 4),
             Container(
               height: 2,
-              width: 30,
+              width: 40,
               decoration: BoxDecoration(
                 color: isSelected ? Colors.white : Colors.transparent,
                 borderRadius: BorderRadius.circular(1),
