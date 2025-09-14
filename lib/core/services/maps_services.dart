@@ -1,13 +1,15 @@
 import 'package:url_launcher/url_launcher.dart';
 
 class MapsServices {
-  Future<void> openGoogleMaps(double lat, double lng) async {
+  Future<bool> openGoogleMaps(double lat, double lng) async {
     final Uri uri = Uri.parse("https://www.google.com/maps/search/?api=1&query=$lat,$lng");
 
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
+      return true;
     } else {
-      throw 'Tidak bisa membuka Google Maps';
+      return false;
     }
   }
+
 }
