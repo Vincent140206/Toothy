@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../../data/models/schedule.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
@@ -10,7 +9,7 @@ class ScheduleServices {
   Future<List<Schedule>> getSchedules() async {
     try {
       final response = await dioClient.dio.get(
-        "${Urls.baseUrl}/api/schedules?page=1&limit=10",
+        "${Urls.getSchedules}?",
       );
 
       if (response.statusCode == 200) {
@@ -23,6 +22,15 @@ class ScheduleServices {
       print("Error: $e");
       return [];
     }
+  }
+
+  Future<Schedule> getSpecificSchedule(String id) async {
+    final response = await dioClient.dio.get("${Urls.getSchedules}/$id");
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = response.data['data'];
+      return Schedule.fromJson(data);
+    }
+    throw Exception("Failed to load schedule");
   }
 
 }

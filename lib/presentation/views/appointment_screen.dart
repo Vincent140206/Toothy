@@ -11,10 +11,11 @@ class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
   final Report? report;
   final String clinicName;
+  final String? scheduleId;
 
   const AppointmentScreen({
     super.key,
-    required this.doctor, this.report, required this.clinicName,
+    required this.doctor, this.report, required this.clinicName, this.scheduleId,
   });
 
   @override
@@ -26,13 +27,20 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String? _selectedTime;
   DateTime _focusedDay = DateTime.now();
 
-  final List<String> availableTimes = ['09.00', '11.00', '14.00', '16.00', '18.00', '20.00'];
-
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now();
-    _selectedTime = '11.00';
+  }
+
+  Future<List<Schedule>> _loadSchedules() async {
+    final service = ScheduleServices();
+    if (widget.scheduleId != null) {
+      final schedule = await service.getSpecificSchedule(widget.scheduleId!);
+      return [schedule];
+    } else {
+      return await service.getSchedules();
+    }
   }
 
   @override
@@ -198,10 +206,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 
-
   Widget _buildTimeSlots() {
     return FutureBuilder<List<Schedule>>(
-      future: ScheduleServices().getSchedules(),
+      future: _loadSchedules(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
