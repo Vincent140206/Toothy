@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:toothy/presentation/viewmodels/appointment_viewmodel.dart';
 import 'package:toothy/presentation/viewmodels/tooth_scan_viewmodel.dart';
 import 'package:toothy/presentation/views/auth/view/login_screen.dart';
 import 'package:toothy/presentation/views/auth/view/register_screen.dart';
@@ -22,6 +23,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ToothScanViewModel()),
+        ChangeNotifierProvider(create: (_) => AppointmentViewModel()),
       ],
       child: MaterialApp(
         navigatorKey: navigatorKey,

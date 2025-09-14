@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toothy/core/services/midtrans_services.dart';
 import '../../core/services/schedule_services.dart';
 import '../../data/models/doctor.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../data/models/report.dart';
 import '../../data/models/schedule.dart' hide Doctor;
-
+import '../viewmodels/appointment_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
@@ -37,8 +39,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<List<Schedule>> _loadSchedules() async {
     final service = ScheduleServices();
-    if (widget.scheduleId != null) {
-      final schedule = await ScheduleServices().getSpecificSchedule(id: widget.scheduleId ?? '');
+    if (widget.scheduleId != null && widget.scheduleId!.isNotEmpty) {
+      final schedule = await ScheduleServices().getSpecificSchedule(
+        id: widget.scheduleId!,
+      );
       return [schedule];
     } else {
       return await service.getSchedules();
@@ -77,27 +81,31 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     return Container(
       padding: const EdgeInsets.only(top: 40, bottom: 40),
-        decoration: ShapeDecoration(
-          gradient: LinearGradient(
-            begin: Alignment(0.35, -0.20),
-            end: Alignment(1.19, 1.14),
-            colors: [const Color(0xFF007FFF), const Color(0xFF004183), const Color(0xFF000307)],
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(60),
-              bottomRight: Radius.circular(60),
-            ),
-          ),
-          shadows: [
-            BoxShadow(
-              color: Color(0x75000000),
-              blurRadius: 5,
-              offset: Offset(3, 3),
-              spreadRadius: 0,
-            )
+      decoration: ShapeDecoration(
+        gradient: LinearGradient(
+          begin: Alignment(0.35, -0.20),
+          end: Alignment(1.19, 1.14),
+          colors: [
+            const Color(0xFF007FFF),
+            const Color(0xFF004183),
+            const Color(0xFF000307)
           ],
         ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(60),
+            bottomRight: Radius.circular(60),
+          ),
+        ),
+        shadows: [
+          BoxShadow(
+            color: Color(0x75000000),
+            blurRadius: 5,
+            offset: Offset(3, 3),
+            spreadRadius: 0,
+          )
+        ],
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -158,7 +166,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.pin_drop_rounded, color: Colors.white70, size: 24),
+                    Icon(Icons.pin_drop_rounded, color: Colors.white70,
+                        size: 24),
                     const SizedBox(width: 6),
                     Text(
                       widget.clinicName,
@@ -234,8 +243,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         }
 
         final availableTimes = filtered.map((s) {
-          final start = "${s.startTime.hour.toString().padLeft(2, '0')}:${s.startTime.minute.toString().padLeft(2, '0')}";
-          final end = "${s.endTime.hour.toString().padLeft(2, '0')}:${s.endTime.minute.toString().padLeft(2, '0')}";
+          final start = "${s.startTime.hour.toString().padLeft(2, '0')}:${s
+              .startTime.minute
+              .toString()
+              .padLeft(2, '0')}";
+          final end = "${s.endTime.hour.toString().padLeft(2, '0')}:${s.endTime
+              .minute.toString().padLeft(2, '0')}";
           return "$start - $end";
         }).toList();
 
@@ -252,12 +265,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 8, horizontal: 14),
                 decoration: BoxDecoration(
                   color: isSelected ? const Color(0xFF007BFF) : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isSelected ? const Color(0xFF007BFF) : Colors.grey.shade400,
+                    color: isSelected ? const Color(0xFF007BFF) : Colors.grey
+                        .shade400,
                   ),
                 ),
                 child: Text(
@@ -278,42 +293,51 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget _buildBookingButton() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF007BFF),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          minimumSize: const Size(double.infinity, 50),
-        ),
-        onPressed: () async {
-          if (_selectedDate != null && _selectedTime != null) {
-            final reportInfo = widget.report != null
-                ? " (Report ID: ${widget.report!.id})"
-                : "";
-
-            final formattedDate =
-                "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!
-                .year}";
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  'Janji temu dibuat dengan ${widget.doctor.name} di ${widget
-                      .clinicName}, '
-                      'tanggal $formattedDate jam $_selectedTime$reportInfo',
-                ),
+      child: Consumer<AppointmentViewModel>(
+        builder: (context, vm, _) {
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF007BFF),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            );
-            // final snapToken = await midtrans.getSnapToken();
-            // await midtrans.pay(snapToken);
-          }
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            onPressed: vm.isLoading ? null : () async {
+              final prefs = await SharedPreferences.getInstance();
+              final userId = prefs.getString("user_id");
+
+              if (_selectedDate == null || _selectedTime == null) return;
+
+              await context.read<AppointmentViewModel>().createAppointment(
+                userId: userId,
+                scheduleId: widget.scheduleId ?? "",
+                additionalDescription: widget.report != null
+                    ? "Report ID: ${widget.report!.id}"
+                    : null,
+              );
+
+              if (!mounted) return;
+
+              if (vm.errorMessage != null) {
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text("Error: ${vm.errorMessage}")));
+              } else if (vm.appointments != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Appointment berhasil dibuat!")),
+                );
+              }
+            },
+            child: vm.isLoading
+                ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+            )
+                : const Text('Buat Janji Temu', style: TextStyle(fontSize: 18, color: Colors.white)),
+          );
         },
-        child: const Text(
-          'Buat Janji Temu',
-          style: TextStyle(fontSize: 18, color: Colors.white),
-        ),
       ),
     );
   }

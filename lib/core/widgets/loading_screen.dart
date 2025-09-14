@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -7,83 +8,77 @@ class LoadingScreen extends StatefulWidget {
   State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
+class _LoadingScreenState extends State<LoadingScreen> {
+  int _dotCount = 0;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
-      vsync: this,
-    );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-
-    _fadeController.forward();
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+      setState(() {
+        _dotCount = (_dotCount + 1) % 4;
+      });
+    });
   }
 
   @override
   void dispose() {
-    _fadeController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final circleSize = size.width * 0.2;
+    final gifSize = size.width * 0.2;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: PopScope(
-        canPop: false,
-        child: Center(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Stack(
+              alignment: Alignment.center,
               children: [
                 Container(
-                  width: 80,
-                  height: 80,
+                  width: circleSize,
+                  height: circleSize,
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(
-                    Icons.timelapse,
-                    size: 40,
-                    color: Colors.blue.shade400,
+                    shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(height: 32),
+                Image.asset(
+                  'assets/images/GigiJogetJoget.gif',
+                  width: gifSize,
+                  height: gifSize,
+                  fit: BoxFit.contain,
+                ),
                 SizedBox(
-                  width: 32,
-                  height: 32,
+                  width: circleSize,
+                  height: circleSize,
                   child: CircularProgressIndicator(
-                    strokeWidth: 3,
+                    strokeWidth: 4,
                     valueColor: AlwaysStoppedAnimation<Color>(
                       Colors.blue.shade400,
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  'Loading...',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ],
             ),
-          ),
+            const SizedBox(height: 24),
+            Text(
+              'Loading${'.' * _dotCount}',
+              style: TextStyle(
+                fontSize: size.width * 0.045,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

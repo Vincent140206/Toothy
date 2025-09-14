@@ -21,7 +21,7 @@ class InstructionItem extends StatelessWidget {
             width: 24,
             height: 24,
             decoration: BoxDecoration(
-              color: const Color(0xFF00BFA5).withOpacity(0.1),
+              color: const Color(0xFF00B0FF).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -30,7 +30,7 @@ class InstructionItem extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF00BFA5),
+                  color: Color(0xFF0052FF)
                 ),
               ),
             ),
@@ -121,7 +121,7 @@ class InstructionCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.info_outline,
-                color: const Color(0xFF00BFA5),
+                color: const Color(0xFF193EDC),
                 size: 24,
               ),
               const SizedBox(width: 8),

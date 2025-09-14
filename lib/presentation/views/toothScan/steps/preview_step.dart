@@ -35,7 +35,6 @@ class PreviewStep extends StatelessWidget {
 
     return Column(
       children: [
-        // Photo title if provided
         if (photoTitle != null)
           Padding(
             padding: const EdgeInsets.all(16.0),

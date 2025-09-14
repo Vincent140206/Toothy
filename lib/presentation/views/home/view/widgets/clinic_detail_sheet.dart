@@ -57,7 +57,7 @@ class ClinicDetailSheet extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
-                    clinic.photo_url,
+                    clinic.photoUrl,
                     height: 120,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -74,7 +74,7 @@ class ClinicDetailSheet extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(clinic.address),
                 const SizedBox(height: 8),
-                Text("Jam buka: ${clinic.open_time ?? '-'}"),
+                Text("Jam buka: ${clinic.openTime ?? '-'}"),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -83,8 +83,8 @@ class ClinicDetailSheet extends StatelessWidget {
                   ),
                   onPressed: () {
                     mapsServices.openGoogleMaps(
-                      clinic.location_latitude,
-                      clinic.location_longitude,
+                      clinic.locationLatitude ?? 0,
+                      clinic.locationLongitude ?? 0,
                     );
                   },
                   child: const Text(

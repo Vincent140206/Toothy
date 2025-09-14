@@ -46,8 +46,8 @@ class _ClinicMapViewState extends State<ClinicMapView> {
         }
 
         final LatLng initialCenter = LatLng(
-          clinics.first.location_latitude,
-          clinics.first.location_longitude,
+          clinics.first.locationLatitude ?? 0,
+          clinics.first.locationLongitude ?? 0,
         );
 
         return Scaffold(
@@ -116,8 +116,8 @@ class _ClinicMapViewState extends State<ClinicMapView> {
                     markers: clinics.map((clinic) {
                       return Marker(
                         point: LatLng(
-                          clinic.location_latitude,
-                          clinic.location_longitude,
+                          clinic.locationLatitude ?? 0,
+                          clinic.locationLongitude ?? 0,
                         ),
                         width: 80,
                         height: 80,
@@ -128,8 +128,8 @@ class _ClinicMapViewState extends State<ClinicMapView> {
                             });
                             _mapController.move(
                               LatLng(
-                                clinic.location_latitude,
-                                clinic.location_longitude,
+                                clinic.locationLatitude ?? 0,
+                                clinic.locationLongitude ?? 0,
                               ),
                               _mapController.camera.zoom,
                             );

@@ -98,12 +98,12 @@ class _ClinicAllViewState extends State<ClinicAllView> {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12.0),
                           child: ClinicListCard(
-                            id: clinic.id,
-                            photo_url: clinic.photo_url ?? "",
+                            id: clinic.id ?? '',
+                            photo_url: clinic.photoUrl ?? "",
                             name: clinic.name,
                             address: clinic.address,
-                            open_time: clinic.open_time,
-                            close_time: clinic.close_time,
+                            open_time: clinic.openTime ?? '',
+                            close_time: clinic.closeTime ?? '',
                             onTap: () {
                               // TODO: Navigasi ke detail
                             },

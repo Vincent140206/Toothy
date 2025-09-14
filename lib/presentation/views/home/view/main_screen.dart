@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:toothy/core/widgets/loading_screen.dart';
 import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
 import 'package:toothy/presentation/views/toothScan/scan_result_screen.dart';
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
     const ClinicMapView(),
     const ToothScanScreen(),
     const ScanResultScreen(),
-    const ClinicMapView(),
+    const LoadingScreen(),
   ];
 
   void _onItemTapped(int index) {

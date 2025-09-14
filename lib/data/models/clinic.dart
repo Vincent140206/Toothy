@@ -1,35 +1,35 @@
 import 'doctor.dart';
 
 class Clinic {
-  final String id;
+  final String? id;
   final String name;
-  final String photo_url;
-  final double location_longitude;
-  final double location_latitude;
+  final String photoUrl;
+  final double? locationLongitude;
+  final double? locationLatitude;
   final String address;
-  final String open_time;
-  final String close_time;
-  final String created_at;
-  final String updated_at;
+  final String? openTime;
+  final String? closeTime;
+  final String? createdAt;
+  final String? updatedAt;
   final List<Doctor> doctors;
 
   Clinic({
-    required this.id,
+    this.id,
     required this.name,
-    required this.photo_url,
-    required this.location_longitude,
-    required this.location_latitude,
+    required this.photoUrl,
+    this.locationLongitude,
+    this.locationLatitude,
     required this.address,
-    required this.open_time,
-    required this.close_time,
-    required this.created_at,
-    required this.updated_at,
-    required this.doctors
+    this.openTime,
+    this.closeTime,
+    this.createdAt,
+    this.updatedAt,
+    this.doctors = const [],
   });
 
   factory Clinic.fromJson(Map<String, dynamic> json) {
-    String formatTime(dynamic value) {
-      if (value == null) return '';
+    String? formatTime(dynamic value) {
+      if (value == null) return null;
       final str = value.toString();
 
       if (str.contains('T')) {
@@ -57,16 +57,16 @@ class Clinic {
     }
 
     return Clinic(
-      id: json['id'].toString(),
+      id: json['id']?.toString(),
       name: json['name'] ?? '',
-      photo_url: json['photo_url'] ?? '',
-      location_longitude: (json['location_longitude'] as num).toDouble(),
-      location_latitude: (json['location_latitude'] as num).toDouble(),
+      photoUrl: json['photo_url'] ?? '',
+      locationLongitude: (json['location_longitude'] as num?)?.toDouble(),
+      locationLatitude: (json['location_latitude'] as num?)?.toDouble(),
       address: json['address'] ?? '',
-      open_time: formatTime(json['open_time']),
-      close_time: formatTime(json['close_time']),
-      created_at: json['created_at']?.toString() ?? '',
-      updated_at: json['updated_at']?.toString() ?? '',
+      openTime: formatTime(json['open_time']),
+      closeTime: formatTime(json['close_time']),
+      createdAt: json['created_at']?.toString(),
+      updatedAt: json['updated_at']?.toString(),
       doctors: (json['doctors'] != null && json['doctors'] is List)
           ? (json['doctors'] as List)
           .map((d) => Doctor.fromJson(d as Map<String, dynamic>))
@@ -79,14 +79,14 @@ class Clinic {
     return {
       'id': id,
       'name': name,
-      'photo_url': photo_url,
-      'location_longitude': location_longitude,
-      'location_latitude': location_latitude,
+      'photo_url': photoUrl,
+      'location_longitude': locationLongitude,
+      'location_latitude': locationLatitude,
       'address': address,
-      'open_time': open_time,
-      'close_time': close_time,
-      'created_at': created_at,
-      'updated_at': updated_at,
+      'open_time': openTime,
+      'close_time': closeTime,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
       'doctors': doctors.isNotEmpty
           ? doctors.map((d) => d.toJson()).toList()
           : [],

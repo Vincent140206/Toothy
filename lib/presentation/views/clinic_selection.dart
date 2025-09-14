@@ -212,7 +212,7 @@ class _ClinicSelectionPageState extends State<ClinicSelectionPage> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: Image.network(
-                    clinic.photo_url,
+                    clinic.photoUrl,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -275,7 +275,7 @@ class _ClinicSelectionPageState extends State<ClinicSelectionPage> {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            '${clinic.open_time} - ${clinic.close_time}',
+                            '${clinic.openTime} - ${clinic.closeTime}',
                             style: const TextStyle(
                               fontSize: 13,
                               color: Color(0xFF059669),
@@ -313,7 +313,7 @@ class _ClinicSelectionPageState extends State<ClinicSelectionPage> {
       context,
       MaterialPageRoute(
         builder: (context) => ClinicDoctorListPage(
-          report: widget.report, clinicId: clinic.id,
+          report: widget.report, clinicId: clinic.id ?? '',
         ),
       ),
     );

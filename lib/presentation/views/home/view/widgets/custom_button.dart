@@ -19,15 +19,17 @@ class GradientButton extends StatelessWidget {
     return Container(
       height: 50,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF00BFA5), Color(0xFF00ACC1)],
+        gradient: LinearGradient(
+          begin: Alignment(0.32, -0.00),
+          end: Alignment(0.34, 1.12),
+          colors: [const Color(0xFF007FFF), const Color(0xFF007FFF), const Color(0xFF0658AB)],
         ),
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00BFA5).withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF007FFF),
+            blurRadius: 2,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -119,13 +121,15 @@ class AnimatedStartButton extends StatelessWidget {
             width: double.infinity,
             height: 52,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF00BFA5), Color(0xFF00ACC1)],
+              gradient: LinearGradient(
+                begin: Alignment(0.32, -0.00),
+                end: Alignment(0.34, 1.12),
+                colors: [const Color(0xFF007FFF), const Color(0xFF007FFF), const Color(0xFF0658AB)],
               ),
               borderRadius: BorderRadius.circular(26),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00BFA5).withOpacity(0.3),
+                  color: const Color(0xFF005AFF).withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),

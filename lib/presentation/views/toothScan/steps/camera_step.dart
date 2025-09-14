@@ -136,7 +136,7 @@ class CameraGuideFrame extends StatelessWidget {
         height: MediaQuery.of(context).size.height * 0.25,
         decoration: BoxDecoration(
           border: Border.all(
-            color: const Color(0xFF00BFA5),
+            color: const Color(0xFF009DFF),
             width: 3,
           ),
           borderRadius: BorderRadius.circular(20),
@@ -175,7 +175,7 @@ class CameraCaptureButton extends StatelessWidget {
           color: Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: const Color(0xFF00BFA5),
+            color: const Color(0xFF0059FF),
             width: 4,
           ),
           boxShadow: [
@@ -188,7 +188,7 @@ class CameraCaptureButton extends StatelessWidget {
         ),
         child: const Icon(
           Icons.camera_alt,
-          color: Color(0xFF00BFA5),
+          color: Color(0xFF0059FF),
           size: 32,
         ),
       ),
@@ -229,7 +229,7 @@ class CameraControlsWidget extends StatelessWidget {
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.only(top: 24, right: 24, left: 24, bottom: 48),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -237,7 +237,7 @@ class CameraControlsWidget extends StatelessWidget {
                   icon: isFlashOn ? Icons.flash_on : Icons.flash_off,
                   onPressed: onToggleFlash,
                   backgroundColor: isFlashOn
-                      ? const Color(0xFF00BFA5)
+                      ? const Color(0xFF0059FF)
                       : Colors.white.withOpacity(0.2),
                 ),
                 CameraCaptureButton(onTap: onCapture),

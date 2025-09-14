@@ -36,17 +36,17 @@ class _ClinicList extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 12.0),
               child: ClinicListCard(
 
-                photo_url: clinics.photo_url ?? "",
+                photo_url: clinics.photoUrl ?? "",
                 name: clinics.name,
                 address: clinics.address,
-                open_time: clinics.open_time,
-                close_time: clinics.close_time,
-                id: clinics.id,
+                open_time: clinics.openTime ?? 'Tidak ada data',
+                close_time: clinics.closeTime ?? 'Tidak ada data',
+                id: clinics.id ?? 'tidak ada',
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ClinicDoctorListPage(clinicId: clinics.id),
+                      builder: (_) => ClinicDoctorListPage(clinicId: clinics.id ?? ''),
                     ),
                   );
                 },

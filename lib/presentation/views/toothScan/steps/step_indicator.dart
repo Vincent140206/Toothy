@@ -28,13 +28,13 @@ class StepIndicatorWidget extends StatelessWidget {
               color: isDone
                   ? const Color(0xFF00BFA5)
                   : isActive
-                  ? const Color(0xFF00BFA5)
+                  ? const Color(0xFF0077FF)
                   : Colors.grey.shade300,
               shape: BoxShape.circle,
               boxShadow: isActive
                   ? [
                 BoxShadow(
-                  color: const Color(0xFF00BFA5).withOpacity(0.3),
+                  color: const Color(0xFF0033FF).withOpacity(0.3),
                   blurRadius: 8,
                   spreadRadius: 2,
                 )
