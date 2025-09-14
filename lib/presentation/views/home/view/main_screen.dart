@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:toothy/presentation/views/clinic_map_view.dart';
 import 'package:toothy/presentation/views/home/view/widgets/bottom_navbar.dart';
 import 'package:toothy/presentation/views/toothScan/scan_result_screen.dart';
@@ -34,8 +35,8 @@ class _MainScreenState extends State<MainScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    final fabSize = screenWidth * 0.18;
-    final fabIconSize = screenWidth * 0.08;
+    final fabSize = screenWidth * 0.23;
+    final fabIconSize = screenWidth * 0.1;
     final fabOffset = screenHeight * 0.012;
 
     return Scaffold(
@@ -54,10 +55,16 @@ class _MainScreenState extends State<MainScreen> {
             onPressed: () => _onItemTapped(2),
             backgroundColor: Colors.white,
             shape: const CircleBorder(),
-            child: Icon(
-              Icons.center_focus_strong_outlined,
-              size: fabIconSize,
-              color: Colors.black,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SvgPicture.asset(
+                  'assets/icons/Scan.svg',
+                  width: fabIconSize,
+                ),
+                Text("TOOTH SCAN", style: TextStyle(color: Colors.black, fontSize: 12),)
+              ],
             ),
           ),
         ),

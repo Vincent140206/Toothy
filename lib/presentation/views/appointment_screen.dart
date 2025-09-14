@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toothy/core/services/midtrans_services.dart';
 import '../../core/services/schedule_services.dart';
 import '../../data/models/doctor.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -25,6 +26,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime? _selectedDate;
   String? _selectedTime;
   DateTime _focusedDay = DateTime.now();
+  MidTransService midTransService = MidTransService();
+  final midtrans = MidTransService();
 
   @override
   void initState() {
@@ -284,7 +287,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
           minimumSize: const Size(double.infinity, 50),
         ),
-        onPressed: () {
+        onPressed: () async {
           if (_selectedDate != null && _selectedTime != null) {
             final reportInfo = widget.report != null
                 ? " (Report ID: ${widget.report!.id})"
@@ -303,6 +306,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 ),
               ),
             );
+            // final snapToken = await midtrans.getSnapToken();
+            // await midtrans.pay(snapToken);
           }
         },
         child: const Text(
