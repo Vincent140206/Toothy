@@ -6,10 +6,13 @@ class ScheduleServices {
   final dioClient = DioClient();
   final urls = Urls();
 
-  Future<List<Schedule>> getSchedules() async {
+  Future<List<Schedule>> getSchedules({String? doctorId}) async {
     try {
       final response = await dioClient.dio.get(
-        "${Urls.getSchedules}?",
+        Urls.getSchedules,
+        queryParameters: {
+          if (doctorId != null) "doctor_id": doctorId,
+        },
       );
 
       if (response.statusCode == 200) {
@@ -24,7 +27,8 @@ class ScheduleServices {
     }
   }
 
-  Future<Schedule> getSpecificSchedule(String id) async {
+
+  Future<Schedule> getSpecificSchedule({required String id}) async {
     final response = await dioClient.dio.get("${Urls.getSchedules}/$id");
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = response.data['data'];

@@ -36,15 +36,32 @@ class _TopDentist extends StatelessWidget {
                     ? doctor.specialists.map((s) => s?.title).join(", ")
                     : "Dokter Gigi Umum",
                 experiences: doctor.yearsExperience.toString(),
-                onTap: () async {
-                  final clinic = await doctorService.getSpecificDoctors(doctor.id);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(doctor: doctor, clinicName: clinic?.name ?? "Klinik tidak diketahui",),
-                    ),
-                  );
-                },
+                  onTap: () async {
+                    try {
+                      final schedules = await ScheduleServices().getSchedules(
+                        doctorId: doctor.id,
+                      );
+
+                      final clinicName = schedules.isNotEmpty
+                          ? schedules.first.clinicName
+                          : "Klinik tidak diketahui";
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => AppointmentScreen(
+                            doctor: doctor,
+                            clinicName: clinicName,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Gagal ambil data klinik: $e")),
+                      );
+                    }
+                  }
+
               ),
             );
           }).toList(),

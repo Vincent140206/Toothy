@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../core/services/schedule_services.dart';
 import '../../data/models/doctor.dart';
 import 'package:table_calendar/table_calendar.dart';
-
 import '../../data/models/report.dart';
 import '../../data/models/schedule.dart' hide Doctor;
 
@@ -36,7 +35,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Future<List<Schedule>> _loadSchedules() async {
     final service = ScheduleServices();
     if (widget.scheduleId != null) {
-      final schedule = await service.getSpecificSchedule(widget.scheduleId!);
+      final schedule = await ScheduleServices().getSpecificSchedule(id: widget.scheduleId ?? '');
       return [schedule];
     } else {
       return await service.getSchedules();
