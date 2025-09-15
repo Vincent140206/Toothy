@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:toothy/core/services/maps_services.dart';
 import 'package:toothy/data/models/appointment.dart';
 
-class AppointmentDetailSheet extends StatelessWidget {
+class AppointmentDetailSheet extends StatefulWidget {
   final Appointment appointment;
   final VoidCallback onClose;
 
@@ -14,10 +13,22 @@ class AppointmentDetailSheet extends StatelessWidget {
   });
 
   @override
+  State<AppointmentDetailSheet> createState() => _AppointmentDetailSheetState();
+}
+
+class _AppointmentDetailSheetState extends State<AppointmentDetailSheet> {
+  bool isClosed = false;
+
+  @override
   Widget build(BuildContext context) {
-    final formattedDate = appointment.date != null
-        ? DateFormat('dd MMMM yyyy, HH:mm').format(appointment.date!)
+    final formattedDate = widget.appointment.date != null
+        ? DateFormat('dd MMMM yyyy, HH:mm').format(widget.appointment.date!)
         : "-";
+
+    final clinicInfo = [
+      widget.appointment.schedule?.clinicName,
+      widget.appointment.schedule?.clinic?.address
+    ].where((e) => e != null && e.isNotEmpty).join('\n');
 
     return DraggableScrollableSheet(
       initialChildSize: 0.4,
@@ -26,101 +37,99 @@ class AppointmentDetailSheet extends StatelessWidget {
       builder: (context, scrollController) {
         return NotificationListener<DraggableScrollableNotification>(
           onNotification: (notification) {
-            if (notification.extent <= 0.26) {
-              onClose();
+            if (!isClosed && notification.extent <= 0.26) {
+              isClosed = true;
+              widget.onClose();
             }
             return true;
           },
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 10,
-                  offset: Offset(0, -2),
-                ),
-              ],
+              color: Colors.transparent,
             ),
-            child: Column(
-              children: [
-                Container(
-                  width: 50,
-                  height: 5,
-                  margin: const EdgeInsets.only(top: 12, bottom: 20),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-
-                Expanded(
-                  child: ListView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    children: [
-                      const Text(
-                        "Detail Appointment",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(40)),
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 5,
+                      margin: const EdgeInsets.only(top: 12, bottom: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(15),
                       ),
-                      const SizedBox(height: 24),
-                      _buildInfoCard(
-                          icon: Icons.local_hospital_rounded,
-                          title: "Klinik",
-                          value: '${appointment.schedule?.clinicName}\n'
-                              '${appointment.schedule?.clinic?.address}' ?? ''
-                      ),
-                      const SizedBox(height: 12),
-                      _buildInfoCard(
-                        icon: Icons.person_outline,
-                        title: "Dokter",
-                        value: appointment.doctorName ?? "-",
-                      ),
-                      const SizedBox(height: 12),
-                      _buildInfoCard(
-                        icon: Icons.access_time_outlined,
-                        title: "Tanggal & Waktu",
-                        value: formattedDate,
-                      ),
-                      const SizedBox(height: 12),
-                      _buildInfoCard(
-                        icon: Icons.info_outline,
-                        title: "Status",
-                        value: appointment.status ?? "-",
-                      ),
-                      const SizedBox(height: 32),
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: onClose,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueAccent,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            "Tutup",
+                    ),
+                    Expanded(
+                      child: ListView(
+                        controller: scrollController,
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        children: [
+                          const Text(
+                            "Detail Appointment",
                             style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 24),
+                          _buildInfoCard(
+                            icon: Icons.local_hospital_rounded,
+                            title: "Klinik",
+                            value: clinicInfo.isNotEmpty ? clinicInfo : "-",
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoCard(
+                            icon: Icons.person_outline,
+                            title: "Dokter",
+                            value: widget.appointment.doctorName ?? "-",
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoCard(
+                            icon: Icons.access_time_outlined,
+                            title: "Tanggal & Waktu",
+                            value: formattedDate,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildInfoCard(
+                            icon: Icons.info_outline,
+                            title: "Status",
+                            value: widget.appointment.status ?? "-",
+                          ),
+                          const SizedBox(height: 32),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: widget.onClose,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueAccent,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              child: const Text(
+                                "Tutup",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         );
@@ -128,7 +137,7 @@ class AppointmentDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard({
+    Widget _buildInfoCard({
     required IconData icon,
     required String title,
     required String value,

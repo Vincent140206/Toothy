@@ -471,7 +471,7 @@ class _ToothScanScreenState extends State<ToothScanScreen>
                               Navigator.pop(context);
                             }
 
-                            if (report != null && context.mounted) {
+                            if (report?.status == "success") {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Foto berhasil dikirim & dianalisis"),

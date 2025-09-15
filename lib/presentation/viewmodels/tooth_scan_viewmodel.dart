@@ -153,6 +153,7 @@ class ToothScanViewModel extends ChangeNotifier {
   Future<Report?> sendPicture(List<String> images) async {
     try {
       final result = await ScanServices.sendPictures(images);
+      print(result?.status);
       _report = result;
       notifyListeners();
       return result;

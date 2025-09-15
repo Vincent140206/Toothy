@@ -103,28 +103,45 @@ class ScanServices {
         Urls.createReports,
         data: formData,
       );
+
       print("Status: ${response.statusCode}");
       print("Data: ${response.data}");
 
-      if (response.statusCode == 201 && response.data['status'] == 'success') {
-        return Report.fromJson(response.data['data']);
+      final data = response.data?['data'];
+      if (data != null && data is Map<String, dynamic>) {
+        return Report.fromJson(data);
       }
 
-      if (response.data != null && response.data['data'] != null) {
-        return Report.fromJson(
-            response.data['data'],
-        );
-      }
-
-      return Report.fromJson(response.data['data']
+      return Report(
+        id: '',
+        status: 'error',
+        userId: '',
+        summary: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        message: 'Error, coba foto ulang',
+        recommendations: [],
+        frontTeethPhotoUrl: '',
+        upperTeethPhotoUrl: '',
+        lowerTeethPhotoUrl: '',
       );
     } catch (e) {
       print("Error sending to API: $e");
-      return Report(id: '', status: 'error', userId: '', summary: '', createdAt: DateTime.now(), updatedAt: DateTime.now(), message: 'Error, Coba foto ulang', recommendations: [], frontTeethPhotoUrl: '', upperTeethPhotoUrl: '', lowerTeethPhotoUrl: ''
+      return Report(
+        id: '',
+        status: 'error',
+        userId: '',
+        summary: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        message: 'Error, coba foto ulang',
+        recommendations: [],
+        frontTeethPhotoUrl: '',
+        upperTeethPhotoUrl: '',
+        lowerTeethPhotoUrl: '',
       );
     }
   }
-
 
   static String getCurrentTitle(int currentStep, int currentPhotoIndex) {
     if (currentStep == 1) {
