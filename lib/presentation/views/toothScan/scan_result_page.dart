@@ -256,9 +256,19 @@ import 'package:toothy/core/services/scan_services.dart';
             }
             final alreadyHasAppointment = snapshot.data ?? false;
             return ElevatedButton(
-              onPressed: alreadyHasAppointment
-                  ? null
-                  : () => _navigateToClinicSelection(context),
+              onPressed: () {
+                if (alreadyHasAppointment) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Appointment sudah dibuat untuk report ini."),
+                      backgroundColor: Colors.redAccent,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } else {
+                  _navigateToClinicSelection(context);
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
