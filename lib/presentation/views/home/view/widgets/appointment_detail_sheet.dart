@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:toothy/core/services/maps_services.dart';
 import 'package:toothy/data/models/appointment.dart';
 
 class AppointmentDetailSheet extends StatelessWidget {
@@ -21,7 +22,7 @@ class AppointmentDetailSheet extends StatelessWidget {
     return DraggableScrollableSheet(
       initialChildSize: 0.4,
       minChildSize: 0.25,
-      maxChildSize: 0.54,
+      maxChildSize: 0.65,
       builder: (context, scrollController) {
         return NotificationListener<DraggableScrollableNotification>(
           onNotification: (notification) {
@@ -68,6 +69,13 @@ class AppointmentDetailSheet extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 24),
+                      _buildInfoCard(
+                          icon: Icons.local_hospital_rounded,
+                          title: "Klinik",
+                          value: '${appointment.schedule?.clinicName}\n'
+                              '${appointment.schedule?.clinic?.address}' ?? ''
+                      ),
+                      const SizedBox(height: 12),
                       _buildInfoCard(
                         icon: Icons.person_outline,
                         title: "Dokter",

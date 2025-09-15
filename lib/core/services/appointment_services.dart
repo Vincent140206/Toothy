@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import '../../data/models/appointment.dart';
-import '../../data/models/report.dart';
 import '../constants/url.dart';
 import 'dio_client.dart';
 
