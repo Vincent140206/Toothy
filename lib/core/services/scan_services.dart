@@ -173,4 +173,22 @@ class ScanServices {
       return null;
     }
   }
+
+  Future<bool> hasAppointmentForReport(String reportId) async {
+    final response = await dioClient.dio.get(Urls.getAppointment);
+
+    if (response.statusCode == 200) {
+      final body = response.data;
+      final List data = body['data'];
+
+      final reportIds = data
+          .map((e) => e['report_id'])
+          .where((id) => id != null)
+          .toList();
+
+      return reportIds.contains(reportId);
+    } else {
+      throw Exception('Gagal ambil data appointment');
+    }
+  }
 }
