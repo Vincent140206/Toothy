@@ -4,7 +4,6 @@ import 'package:toothy/core/services/auth_services.dart';
 
 import '../../../../core/widgets/background.dart';
 import '../../../../core/widgets/custom_textfield.dart';
-import '../../../viewmodels/auth_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -32,68 +31,77 @@ class _LoginScreenState extends State<LoginScreen> {
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           const Background(),
           SafeArea(
             child: SingleChildScrollView(
-              child: Container(
-                width: screenWidth,
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: screenHeight * 0.05),
-                    Image.asset(
-                      'assets/images/Berdiri.png',
-                      width: screenWidth * 0.6,
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.08),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: screenHeight * 0.05),
+                  Image.asset(
+                    'assets/images/Berdiri.png',
+                    width: screenWidth * 0.6,
+                    cacheWidth: 600,
+                  ),
+                  SizedBox(height: screenHeight * 0.02),
+                  Text(
+                    'Selamat Datang\nKembali!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: screenWidth * 0.1,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      height: 1.20,
                     ),
-                    SizedBox(height: screenHeight * 0.02),
-                    Text(
-                      'Selamat Datang\nKembali!',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: screenWidth * 0.1,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w700,
-                        height: 1.20,
-                      ),
-                    ),
-                    SizedBox(height: screenHeight * 0.04),
-                    _buildLoginForm(),
-                    SizedBox(height: screenHeight * 0.03),
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          const TextSpan(
-                            text: 'Belum Punya Akun? ',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                            ),
+                  ),
+                  SizedBox(height: screenHeight * 0.04),
+                  _LoginForm(
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    isPasswordVisible: _isPasswordVisible,
+                    onTogglePassword: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    authService: authService,
+                  ),
+                  SizedBox(height: screenHeight * 0.03),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: 'Belum Punya Akun? ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w500,
                           ),
-                          TextSpan(
-                            text: 'Daftar di sini',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w700,
-                              decoration: TextDecoration.none
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.pushNamed(context, '/register');
-                              },
+                        ),
+                        TextSpan(
+                          text: 'Daftar di sini',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w700,
+                            decoration: TextDecoration.none,
                           ),
-                        ],
-                      ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushNamed(context, '/register');
+                            },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -101,12 +109,29 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
 
-  Widget _buildLoginForm() {
+class _LoginForm extends StatelessWidget {
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+  final bool isPasswordVisible;
+  final VoidCallback onTogglePassword;
+  final AuthServices authService;
+
+  const _LoginForm({
+    required this.emailController,
+    required this.passwordController,
+    required this.isPasswordVisible,
+    required this.onTogglePassword,
+    required this.authService,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.25),
+        color: const Color(0x40FFFFFF),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
@@ -114,24 +139,20 @@ class _LoginScreenState extends State<LoginScreen> {
           CustomTextField(
             hintText: 'Email',
             prefixIcon: Icons.email_outlined,
-            controller: _emailController,
+            controller: emailController,
           ),
           const SizedBox(height: 20),
           CustomTextField(
             hintText: 'Password',
             prefixIcon: Icons.lock_outline,
-            obscureText: !_isPasswordVisible,
-            controller: _passwordController,
+            obscureText: !isPasswordVisible,
+            controller: passwordController,
             suffixIcon: IconButton(
               icon: Icon(
-                _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                color: const Color(0xFF153D87).withOpacity(0.6),
+                isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                color: const Color(0x99153D87),
               ),
-              onPressed: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
+              onPressed: onTogglePassword,
             ),
           ),
           Align(
@@ -156,14 +177,15 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ElevatedButton(
               onPressed: () async {
                 final result = await authService.login(
-                  _emailController.text.trim(),
-                  _passwordController.text.trim(),
+                  emailController.text.trim(),
+                  passwordController.text.trim(),
                 );
 
                 if (result['success']) {
                   final sessionValid = await authService.checkSession();
                   if (sessionValid && context.mounted) {
-                    Navigator.pushNamedAndRemoveUntil(context, '/main', (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/main', (route) => false);
                   } else {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -174,7 +196,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 } else {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(result['message'] ?? "Login gagal")),
+                      SnackBar(
+                          content:
+                          Text(result['message'] ?? "Login gagal")),
                     );
                   }
                 }

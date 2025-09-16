@@ -452,60 +452,62 @@ class _ToothScanScreenState extends State<ToothScanScreen>
                       margin: const EdgeInsets.only(left: 8),
                       child: GradientButton(
                         text: "Kirim & Analisis",
-                        onPressed: viewModel.isUploading ? null : () async {
-                          final images = viewModel.capturedImages
-                              .map((xfile) => xfile.path)
-                              .where((path) => path.isNotEmpty)
-                              .toList();
+                          onPressed: viewModel.isUploading ? null : () async {
+                            final images = viewModel.capturedImages
+                                .map((xfile) => xfile.path)
+                                .where((path) => path.isNotEmpty)
+                                .toList();
 
-                          showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (context) => const LoadingScreen(),
-                          );
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const LoadingScreen(),
+                            );
 
-                          try {
-                            final report = await context.read<ToothScanViewModel>().sendPicture(images);
+                            try {
+                              final report = await context.read<ToothScanViewModel>().sendPicture(images);
 
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                            }
-
-                            if (report?.status == "success") {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Foto berhasil dikirim & dianalisis"),
-                                  backgroundColor: Colors.green,
-                                ),
-                              );
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const ScanResultScreen(),
-                                ),
-                              );
-                            } else {
                               if (context.mounted) {
+                                Navigator.pop(context);
+                              }
+
+                              if (report?.status == "success") {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Foto berhasil dikirim & dianalisis"),
+                                      backgroundColor: Colors.green,
+                                    ),
+                                  );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const ScanResultScreen(),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(report?.message ?? "Gagal mengirim foto"),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text("Gagal mengirim foto"),
+                                    content: Text("Terjadi kesalahan yang tidak diketahui"),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                             }
-                          } catch (e) {
-                            if (context.mounted) {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Terjadi kesalahan saat mengirim foto"),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
                           }
-                        },
                       )
                     ),
                   )

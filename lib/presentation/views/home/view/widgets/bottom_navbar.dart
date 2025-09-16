@@ -47,7 +47,7 @@ class BottomNavBar extends StatelessWidget {
                 isSelected: selectedIndex == 1,
                 onTap: () => onItemTapped(1),
               ),
-              const SizedBox(width: 30),
+              const SizedBox(width: 40),
               _buildNavItem(
                 icon: selectedIndex == 3 ? Icons.history : Icons.history_outlined,
                 label: 'Riwayat',

@@ -75,7 +75,19 @@ class ScanServices {
   static Future<Report?> sendPictures(List<String> images) async {
     try {
       if (images.length < 3) {
-        throw Exception("Minimal 3 gambar (depan, atas, bawah) diperlukan");
+        return Report(
+          id: '',
+          status: 'error',
+          userId: '',
+          summary: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          message: 'Minimal 3 foto diperlukan (depan, atas, bawah)',
+          recommendations: [],
+          frontTeethPhotoUrl: '',
+          upperTeethPhotoUrl: '',
+          lowerTeethPhotoUrl: '',
+        );
       }
 
       FormData formData = FormData();
