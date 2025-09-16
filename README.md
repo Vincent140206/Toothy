@@ -1,16 +1,33 @@
-# toothy
+# 🦷 Toothy App
 
-A new Flutter project.
+Selamat datang di **Toothy App** 🎉  
+Aplikasi ini membantu kamu untuk Mengatur janji temu dokter gigi, scan gigi, dan melihat hasil scan gigi kamu.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📲 Cara Install Aplikasi
 
-A few resources to get you started if this is your first Flutter project:
+1. Download file **Toothy.apk** yang sudah dibagikan.
+2. Buka file tersebut di HP Android kamu.
+3. Jika muncul peringatan "Install from Unknown Sources" / "Sumber tidak dikenal":
+   - Masuk ke **Pengaturan > Keamanan**.
+   - Aktifkan **Izinkan install aplikasi dari sumber tidak dikenal**.
+4. Klik **Install**.
+5. Setelah selesai, buka aplikasi **Toothy** dari home screen.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🚀 Cara Menggunakan
+
+1. Buka aplikasi **Toothy**.
+2. Daftar akun baru atau login (jika sudah punya akun).
+3. Gunakan fitur-fitur yang tersedia:
+   - 📅 Buat janji temu
+   - 📸 Scan gigi
+   - 🗺️ Maps Klinik
+   - 📊 Lihat riwayat pemeriksaan
+
+---
+
+## Pengembang ❤️
+- Tim BCC BEBEK Purnama
