@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:toothy/core/services/maps_services.dart';
 import 'package:toothy/core/services/midtrans_services.dart';
 import 'package:toothy/core/services/scan_services.dart';
 import 'package:toothy/data/models/appointment.dart';
-import 'package:toothy/presentation/views/home/view/widgets/custom_button.dart';
-import 'package:toothy/presentation/views/toothScan/scan_result_content.dart';
 import 'package:toothy/presentation/views/toothScan/scan_result_page.dart';
 import '../../core/services/appointment_services.dart';
-import '../../data/models/report.dart';
 import '../viewmodels/appointment_viewmodel.dart';
 
 class AppointmentList extends StatelessWidget {
@@ -87,19 +83,54 @@ class _AppointmentCard extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         try {
-          final appointments = await AppointmentService().getSpecificAppointment(appointment.id);
-          if (appointments != null) {
-            if (appointments?.reportId == null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Report gagal dimuat")),
-              );
-          } print(appointments.reportId);
-            final report = await ScanServices.getSpecificReport(appointments.reportId!);
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ScanResultPage(report: report,)));
+          final appointmentDetail =
+          await AppointmentService().getSpecificAppointment(appointment.id);
+          if (!context.mounted) return;
+
+          if (appointmentDetail == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Appointment tidak ditemukan!"),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+            return;
           }
+
+          if (appointmentDetail.reportId == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Report ID tidak ada untuk appointment ini!"),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+            return;
+          }
+          final report = await ScanServices.getSpecificReport(appointmentDetail.reportId!);
+          if (!context.mounted) return;
+
+          if (report == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Report tidak ditemukan!"),
+                backgroundColor: Colors.redAccent,
+              ),
+            );
+            return;
+          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ScanResultPage(report: report),
+            ),
+          );
         } catch (e) {
+          if (!context.mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error: $e")),
+            const SnackBar(
+              content: Text("Gagal ambil report, coba lagi nanti"),
+              backgroundColor: Colors.redAccent,
+            ),
           );
         }
       },

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -87,6 +88,7 @@ class ScanServices {
           frontTeethPhotoUrl: '',
           upperTeethPhotoUrl: '',
           lowerTeethPhotoUrl: '',
+          hasAppointment: false,
         );
       }
 
@@ -95,15 +97,24 @@ class ScanServices {
       formData.files.addAll([
         MapEntry(
           "front_teeth_photo",
-          await MultipartFile.fromFile(images[0], filename: images[0].split('/').last),
+          await MultipartFile.fromFile(
+            images[0],
+            filename: images[0].split('/').last,
+          ),
         ),
         MapEntry(
           "upper_teeth_photo",
-          await MultipartFile.fromFile(images[1], filename: images[1].split('/').last),
+          await MultipartFile.fromFile(
+            images[1],
+            filename: images[1].split('/').last,
+          ),
         ),
         MapEntry(
           "lower_teeth_photo",
-          await MultipartFile.fromFile(images[2], filename: images[2].split('/').last),
+          await MultipartFile.fromFile(
+            images[2],
+            filename: images[2].split('/').last,
+          ),
         ),
       ]);
 
@@ -136,6 +147,7 @@ class ScanServices {
         frontTeethPhotoUrl: '',
         upperTeethPhotoUrl: '',
         lowerTeethPhotoUrl: '',
+        hasAppointment: false,
       );
     } catch (e) {
       print("Error sending to API: $e");
@@ -151,6 +163,7 @@ class ScanServices {
         frontTeethPhotoUrl: '',
         upperTeethPhotoUrl: '',
         lowerTeethPhotoUrl: '',
+        hasAppointment: false,
       );
     }
   }
@@ -173,9 +186,7 @@ class ScanServices {
 
   static Future<List<Report>> getReports() async {
     try {
-      final response = await dioClient.dio.get(
-        Urls.getReports,
-      );
+      final response = await dioClient.dio.get(Urls.getReports);
 
       if (response.statusCode == 200 && response.data['status'] == 'success') {
         final List<dynamic> reportsJson = response.data['data'];
@@ -190,32 +201,32 @@ class ScanServices {
 
   static Future<Report?> getSpecificReport(String reportId) async {
     try {
-      final response = await dioClient.dio.get('${Urls.getSpecificReports}/$reportId',);
+      final response = await dioClient.dio.get(
+        '${Urls.getSpecificReports}/$reportId',
+      );
 
-      if (response.statusCode == 200 && response.data['status'] == 'success') {
-        final data = response.data['data'];
-        return Report.fromJson(data);
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data['data'] == null) return null;
+
+        return Report.fromJson(data['data']);
+      } else {
+        print("Error getSpecificReport: ${response.statusCode}");
+        return null;
       }
-      return null;
-    } catch (e) {
-      debugPrint("Error getSpecificReport: $e");
+    } catch (e, st) {
+      print("Error getSpecificReport: $e\n$st");
       return null;
     }
   }
 
-  Future<bool> hasAppointmentForReport(String reportId) async {
-    final response = await dioClient.dio.get(Urls.getAppointment);
+  Future<List> hasAppointmentForReport(String reportId) async {
+    final response = await dioClient.dio.get(Urls.getReports);
 
     if (response.statusCode == 200) {
       final body = response.data;
-      final List data = body['data'];
-
-      final reportIds = data
-          .map((e) => e['report_id'])
-          .where((id) => id != null)
-          .toList();
-
-      return reportIds.contains(reportId);
+      return body.data;
     } else {
       throw Exception('Gagal ambil data appointment');
     }

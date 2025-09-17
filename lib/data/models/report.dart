@@ -12,6 +12,7 @@ class Report {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? message;
+  final bool hasAppointment;
   final List<ServiceRecommendation>? recommendations;
 
   Report({
@@ -27,6 +28,7 @@ class Report {
     required this.updatedAt,
     this.message,
     this.recommendations,
+    required this.hasAppointment
   });
 
   factory Report.fromJson(Map<String, dynamic> json) {
@@ -45,6 +47,7 @@ class Report {
       recommendations: (json['report_service_recommendations'] as List<dynamic>)
           .map((e) => ServiceRecommendation.fromJson(e))
           .toList(),
+      hasAppointment: json['has_appointment'] ?? false,
     );
   }
 }

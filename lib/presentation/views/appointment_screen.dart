@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toothy/core/services/midtrans_services.dart';
 import '../../core/services/schedule_services.dart';
 import '../../data/models/doctor.dart';
@@ -8,7 +7,6 @@ import '../../data/models/report.dart';
 import '../../data/models/schedule.dart' hide Doctor;
 import '../viewmodels/appointment_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:midtrans_sdk/midtrans_sdk.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
@@ -33,7 +31,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   String? _selectedTime;
   DateTime _focusedDay = DateTime.now();
 
-  // Hanya gunakan satu instance MidTransService
   final MidTransService _midTransService = MidTransService();
   Schedule? _selectedSchedule;
   bool _isMidtransReady = false;
@@ -43,7 +40,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.initState();
     _selectedDate = DateTime.now();
 
-    // Initialize Midtrans setelah widget selesai di-build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeMidtrans();
     });
@@ -51,7 +47,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   Future<void> _initializeMidtrans() async {
     try {
-      // Wait longer and try multiple times
       await _midTransService.initMidtrans(retryCount: 5);
       if (mounted) {
         setState(() {
@@ -62,7 +57,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     } catch (e) {
       debugPrint("Failed to initialize Midtrans after all retries: $e");
       if (mounted) {
-        // Tampilkan error ke user dengan opsi manual retry
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Payment system failed to initialize"),
@@ -72,7 +66,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               label: "Retry",
               textColor: Colors.white,
               onPressed: () {
-                // Reset state before retry
                 setState(() {
                   _isMidtransReady = false;
                 });

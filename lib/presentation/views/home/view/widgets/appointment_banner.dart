@@ -96,17 +96,7 @@ class _AppointmentBannerState extends State<_AppointmentBanner> {
     return GestureDetector(
       onTap: nearest != null
           ? () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          builder: (context) {
-            return AppointmentDetailSheet(
-              appointment: nearest!,
-              onClose: () => Navigator.of(context).pop(),
-            );
-          },
-        );
+        AppointmentDetailSheet.show(context, appointments.first);
       }
           : null,
       child: Container(

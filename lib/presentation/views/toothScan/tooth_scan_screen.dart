@@ -471,7 +471,7 @@ class _ToothScanScreenState extends State<ToothScanScreen>
                                 Navigator.pop(context);
                               }
 
-                              if (report?.status == "success") {
+                              if ((report?.status ?? "").toLowerCase() == "success") {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(

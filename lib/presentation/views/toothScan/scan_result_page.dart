@@ -1,10 +1,9 @@
   import 'package:flutter/material.dart';
-import 'package:toothy/core/services/scan_services.dart';
   import '../../../data/models/report.dart';
 
   class ScanResultPage extends StatelessWidget {
     final Report? report;
-    final ScanServices scanServices = ScanServices();
+    late final hasAppointment = report!.hasAppointment;
 
     ScanResultPage({super.key, this.report});
 
@@ -246,18 +245,9 @@ import 'package:toothy/core/services/scan_services.dart';
                     ),
                   ],
                 ),
-                child: FutureBuilder<bool>(
-              future: scanServices.hasAppointmentForReport(report!.id),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(color: Colors.white),
-              );
-            }
-            final alreadyHasAppointment = snapshot.data ?? false;
-            return ElevatedButton(
+                child: ElevatedButton(
               onPressed: () {
-                if (alreadyHasAppointment) {
+                if (hasAppointment) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Appointment sudah dibuat untuk report ini."),
@@ -280,13 +270,13 @@ import 'package:toothy/core/services/scan_services.dart';
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(
-                    alreadyHasAppointment ? Icons.check_circle : Icons.local_hospital,
+                    hasAppointment ? Icons.check_circle : Icons.local_hospital,
                     color: Colors.white,
                     size: 24,
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    alreadyHasAppointment
+                    hasAppointment
                         ? "Appointment sudah dibuat"
                         : "Pilih Klinik untuk Appointment",
                     style: const TextStyle(
@@ -297,10 +287,8 @@ import 'package:toothy/core/services/scan_services.dart';
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
+            ),
+              ),
               const SizedBox(height: 16),
             ],
           ),

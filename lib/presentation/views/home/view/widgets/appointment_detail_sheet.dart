@@ -12,6 +12,31 @@ class AppointmentDetailSheet extends StatefulWidget {
     required this.onClose,
   });
 
+  static Future<void> show(BuildContext context, Appointment appointment) async {
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: GestureDetector(
+            onTap: () {},
+            child: AppointmentDetailSheet(
+              appointment: appointment,
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   State<AppointmentDetailSheet> createState() => _AppointmentDetailSheetState();
 }
@@ -48,8 +73,8 @@ class _AppointmentDetailSheetState extends State<AppointmentDetailSheet> {
               color: Colors.transparent,
             ),
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(40)),
+              borderRadius:
+              const BorderRadius.vertical(top: Radius.circular(40)),
               child: Container(
                 color: Colors.white,
                 child: Column(
@@ -137,7 +162,7 @@ class _AppointmentDetailSheetState extends State<AppointmentDetailSheet> {
     );
   }
 
-    Widget _buildInfoCard({
+  Widget _buildInfoCard({
     required IconData icon,
     required String title,
     required String value,
