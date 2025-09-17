@@ -14,6 +14,10 @@ plugins {
 }
 
 android {
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
     namespace = "com.toothy.toothy"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion

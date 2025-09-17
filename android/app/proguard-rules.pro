@@ -1,41 +1,34 @@
-# Midtrans SDK
--keep class id.co.midtrans.** { *; }
--keep class com.midtrans.** { *; }
--keep class id.co.veritrans.** { *; }
--dontwarn id.co.midtrans.**
+########################################
+## ProGuard Rules for Flutter + Midtrans
+########################################
+
+# Jangan obfuscate kelas Midtrans SDK
+-keep class com.midtrans.sdk.corekit.** { *; }
+-keep class com.midtrans.sdk.uikit.** { *; }
+
+# Jangan hilangkan enum (contoh: MidtransEnvironment)
+-keepclassmembers enum * { *; }
+
+# Jangan warn kalau ada internal Midtrans yang pakai dependency tertentu
 -dontwarn com.midtrans.**
--dontwarn id.co.veritrans.**
-
-# Gson
--keep class com.google.gson.** { *; }
--keepattributes *Annotation*
--keep class * extends com.google.gson.TypeAdapter
--keep class * implements com.google.gson.JsonSerializer
--keep class * implements com.google.gson.JsonDeserializer
--keep class * implements com.google.gson.InstanceCreator
--dontwarn com.google.gson.**
-
-# OkHttp & Retrofit
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
--keep class retrofit2.** { *; }
--keep interface retrofit2.** { *; }
--dontwarn retrofit2.**
--keep class retrofit2.converter.gson.** { *; }
-
-# Kotlin
--keep class kotlin.** { *; }
+-dontwarn org.jetbrains.annotations.**
 -dontwarn kotlin.**
 
-# Flutter
--keep class io.flutter.** { *; }
--dontwarn io.flutter.**
+# Biarkan Retrofit / Gson (kadang dipakai Midtrans) tetap jalan
+-keep class com.google.gson.** { *; }
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
 
-# Parcelable
--keepclassmembers class * implements android.os.Parcelable {
-    static ** CREATOR;
+# Flutter biasanya butuh ini juga
+-keep class io.flutter.app.** { *; }
+-keep class io.flutter.plugin.** { *; }
+-keep class io.flutter.util.** { *; }
+-keep class io.flutter.view.** { *; }
+-keep class io.flutter.embedding.** { *; }
+-keep class io.flutter.plugins.** { *; }
+
+# Biarkan enum names tetap terbaca (misal status "success", "pending")
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
 }
-
-# Keep your app models (ubah package sesuai projectmu)
--keep class com.toothy.data.models.** { *; }

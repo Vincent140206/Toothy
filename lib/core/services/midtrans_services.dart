@@ -14,21 +14,26 @@ class MidTransService {
   MidtransSDK? _midtrans;
   bool _isInitialized = false;
 
-  Future<void> initMidtrans({int retryCount = 3}) async {
-    if (_isInitialized) {
-      return;
-    }
+  Future<void> initMidtrans({
+    int retryCount = 3,
+    bool useSandbox = true,
+  }) async {
+    if (_isInitialized) return;
+
+    final clientKey = useSandbox
+        ? "SB-Mid-client-ohIe6VgGelz6UgEu"
+        : "PROD-Mid-client-xxxxx";
 
     for (int attempt = 1; attempt <= retryCount; attempt++) {
       try {
         await Future.delayed(Duration(milliseconds: 500 * attempt));
-
         debugPrint("Midtrans initialization attempt $attempt/$retryCount");
 
         _midtrans = await MidtransSDK.init(
           config: MidtransConfig(
-            clientKey: "SB-Mid-client-ohIe6VgGelz6UgEu",
-            merchantBaseUrl: "https://toothy-api.bccdev.id/"
+            clientKey: clientKey,
+            merchantBaseUrl: "https://toothy-api.bccdev.id/midtrans/",
+            enableLog: true,
           ),
         );
 
@@ -37,17 +42,11 @@ class MidTransService {
         });
 
         _isInitialized = true;
-        debugPrint("Midtrans initialized successfully on attempt $attempt");
         return;
-
       } catch (e) {
         debugPrint("Error initializing Midtrans (attempt $attempt): $e");
         _isInitialized = false;
-
-        if (attempt == retryCount) {
-          rethrow;
-        }
-
+        if (attempt == retryCount) rethrow;
         await Future.delayed(Duration(milliseconds: 1000));
       }
     }
@@ -201,7 +200,7 @@ class MidTransService {
         await initMidtrans();
       }
 
-      debugPrint("Starting payment flow with token: ${snapToken.substring(0, 10)}...");
+      print("Starting payment flow with token: $snapToken");
       await _midtrans?.startPaymentUiFlow(token: snapToken);
     } on PlatformException catch (e) {
       debugPrint("Platform Exception: ${e.message}");

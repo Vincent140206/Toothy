@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:toothy/core/services/midtrans_services.dart';
 import 'package:toothy/core/services/scan_services.dart';
 import 'package:toothy/data/models/appointment.dart';
+import 'package:toothy/presentation/views/MidtransWebView.dart';
 import 'package:toothy/presentation/views/toothScan/scan_result_page.dart';
 import '../../core/services/appointment_services.dart';
 import '../viewmodels/appointment_viewmodel.dart';
@@ -79,6 +80,7 @@ class _AppointmentCard extends StatelessWidget {
     final statusInfo = _getStatusInfo(appointment.status);
     final isUpcoming = appointment.date?.isAfter(DateTime.now()) ?? false;
     final MidTransService midTransService = MidTransService();
+    final MidtransWebView midtransWebView;
 
     return GestureDetector(
       onTap: () async {
@@ -175,16 +177,24 @@ class _AppointmentCard extends StatelessWidget {
                       "Bayar Sekarang",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    onPressed: () async {
-                      final snapToken = appointment.transaction?.snapToken;
-                      if (snapToken != null && snapToken.isNotEmpty) {
-                        await midTransService.pay(snapToken);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("SnapToken tidak ditemukan")),
-                        );
+                      onPressed: () async {
+                        final paymentUrl = appointment.transaction?.paymentUrl;
+                        print(paymentUrl);
+                        if (paymentUrl != null && paymentUrl.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  MidtransWebView(redirectUrl: paymentUrl),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text("Payment URL tidak ditemukan")),
+                          );
+                        }
                       }
-                    },
                   ),
                 ),
               ],

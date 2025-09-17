@@ -8,6 +8,8 @@ import '../../data/models/schedule.dart' hide Doctor;
 import '../viewmodels/appointment_viewmodel.dart';
 import 'package:provider/provider.dart';
 
+import 'MidtransWebView.dart';
+
 class AppointmentScreen extends StatefulWidget {
   final Doctor doctor;
   final Report? report;
@@ -380,9 +382,16 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(SnackBar(content: Text("Appointment Berhasil Dibuat")));
 
-                  final snapToken = appointment.transaction?.snapToken;
-                  if (snapToken != null) {
-                    await _midTransService.pay(snapToken);
+                  final paymentUrl = appointment.transaction?.paymentUrl;
+                  print(paymentUrl);
+                  if (paymentUrl != null && paymentUrl.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            MidtransWebView(redirectUrl: paymentUrl),
+                      ),
+                    );
                   }
                 }
               } catch (e) {

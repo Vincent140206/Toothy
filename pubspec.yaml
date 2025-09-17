@@ -51,6 +51,7 @@ dependencies:
   midtrans_sdk: ^1.0.1
   rename: ^3.1.0
   flutter_launcher_icons: ^0.14.4
+  webview_flutter: ^4.13.0
 
 flutter_launcher_icons:
   android: true
